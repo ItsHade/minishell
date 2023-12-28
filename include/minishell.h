@@ -285,8 +285,6 @@ int     is_env(int c);
 
 int     ft_is_absolute(char *cmd);
 
-void	ft_exec_abs(char **command, char **envp);
-
 char	*ft_findcmdpath(char *cmd, char **envp, char *tmp, char *cmd_path);
 
 /* PUT */
@@ -315,7 +313,7 @@ int		ft_exec_builtin(t_data *data, t_envp **envp, int i);
 
 char    **ft_lst_to_tab(t_envp **lst);
 
-void	ft_exec_abs(char **command, char **envp);
+int		ft_exec_abs(char **command, char **envp);
 
 int		ft_exec(char **command, t_envp **envp);
 

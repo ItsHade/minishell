@@ -35,7 +35,7 @@ int	quote_error(char *s)
 			i++;
 	}
 	if (sq || dq)
-		return (ft_putstr_fd("unquoted issues >\n", 2), ft_free(s),1);
+		return (ft_putstr_fd("unquoted issues >\n", 2), ft_free(s),1); // why the '>'
 	return (0);
 }
 

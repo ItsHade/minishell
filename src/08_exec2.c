@@ -3,7 +3,7 @@
 
 extern int g_return;
 
-void	ft_exec_abs(char **command, char **envp)
+int	ft_exec_abs(char **command, char **envp)
 {
 	if (execve(command[0], command, envp) == -1)
 	{
@@ -14,13 +14,15 @@ void	ft_exec_abs(char **command, char **envp)
 			ft_putstr_fd(": Is a directory\n", 2);
 			g_return = 126;
 			ft_freetab(envp);
-			return ;
+			return (g_return);
 		}
 		g_return = 127;
 		ft_putstr_fd("minishell: ", 2);
 		ft_cmd_not_found(command[0], 127);
 		ft_freetab(envp);
+		return (g_return);
 	}
+	return (0);
 }
 
 int	ft_is_absolute(char *cmd)
@@ -32,6 +34,9 @@ int	ft_is_absolute(char *cmd)
 		if (fileStat.st_mode & S_IFDIR)
 			return (0);
 	}
+	if (access(cmd, F_OK | X_OK) == 0)
+		return (0);
+	printf("NOT ABS: %s\n", cmd);
 	return (-1);
 }
 
@@ -89,7 +94,7 @@ int	ft_exec_cmd(t_data *data, t_envp **envp, int i)
 	return (0);
 }
 
-int	ft_execute(t_data *data, t_envp **envp) //??pkoi faut dup
+int	ft_execute(t_data *data, t_envp **envp) //??pkoi faut dup // pour remettre les std comme avant
 {
 	int	i;
 
@@ -100,8 +105,8 @@ int	ft_execute(t_data *data, t_envp **envp) //??pkoi faut dup
 	data->stdout = dup(STDOUT_FILENO);
 	if (ft_check_here_doc(data) == -1)
 	{
-		if (dup2(data->stdin, STDIN_FILENO) == -1) //??repeter
-			return (ft_close_std(data), -1);
+		// if (dup2(data->stdin, STDIN_FILENO) == -1) //??repeter //c'etait pour l'ancienne version des here doc
+		// 	return (ft_close_std(data), -1);
 		return (ft_close_std(data), -1);
 	}
 	if (ft_exec_cmd(data, envp, i) == -1)

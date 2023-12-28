@@ -16,7 +16,7 @@ int    ft_exec(char **command, t_envp **envp)
 	if (!command)
 		return (ft_freetab(env), g_return);
 	if (ft_is_absolute(command[0]) == 0)
-		return (ft_exec_abs(command, env), 0);
+		return (ft_exec_abs(command, env));
 	path = ft_findcmdpath(command[0], env, NULL, NULL);
 	if (!path)
 		return (ft_cmd_not_found(command[0], 127), ft_freetab(env), g_return);

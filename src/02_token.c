@@ -38,12 +38,42 @@ int	ft_count_words(char *line, char *sep, char *meta)
 	}
 	return (count);
 }
+/*
+	int	in_quotes;
+	int	len;
+	int		stacked;
+	char	quote;
+	char	quotes[4] = "'\"";
+
+	in_quotes = 0;
+	len = 0;
+	while (line[*i] && ft_is_sep(line[*i], sep))
+		(*i)++;
+	while (line[*i])
+	{
+		if (line[*i] && ft_is_sep(line[*i], meta) && in_quotes == 0 && len == 0)
+		{
+			stacked = 0;
+			while (line[*i] && ft_is_sep(line[*i], meta) && in_quotes == 0 && stacked < 2)
+			{
+				if (line[*i] == '|')
+					stacked = 3;
+				(*i)++;
+				len++;
+				stacked++;
+			}
+			break;
+		}
+*/
+
+//cat << end > out | ls -la
+
 
 int	ft_next_word_len(char *line, int *i, char *sep, char *meta)
 {
 	int	in_quotes;
 	int	len;
-	char	m;
+	char		m;
 	char	quote;
 	char	quotes[4] = "'\"";
 

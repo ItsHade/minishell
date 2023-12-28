@@ -74,10 +74,10 @@ void	ft_putcmdtable(t_data *data)
 }
 
 //in case of failled malloc (nb should be -1)
-void	ft_exit(t_data *data, char *line, int nb) //j'ai ajouté line
+void	ft_exit(t_data *data, char *line, int nb)
 {
 	clear_ep(&data->env);
-	  rl_clear_history();
+	rl_clear_history();
 	ft_free(line);
 	line = NULL;
 	exit(nb);
@@ -99,10 +99,9 @@ char *ft_get_line(t_data *data, char *line)
 			return (NULL);
 		return (line);
 	}
-	else //??
+	else
 	{
-		ft_putstr_fd("exit\n", 2); //exits after ls > /
-		ft_free(line); //??
+		ft_putstr_fd("exit\n", 2);
 		clear_ep(&data->env);
 		rl_clear_history();
 		exit(g_return);
@@ -129,7 +128,8 @@ int	minishell(t_data *data)
 			ft_exit(data, line, -1);
 		if (!line)
 			continue;
-		//ft_putlst(&token_list);
+		//
+		// ft_putlst(&token_list);
 		ft_free(line);
 		if (syntax_error(&token_list))
 		{
@@ -138,11 +138,15 @@ int	minishell(t_data *data)
 		}
 		if (ft_parsing(&token_list, data) == -1)
 			continue; //??
+		//
+		ft_putlst(&token_list);
 		ft_lstclear(&token_list);
+		//
+		ft_putcmdtable(data);
 		if (ft_execute(data, &data->env) == -1)
 		{
 			ft_freecmdtable(data);
-			ft_putstr_fd("test\n", 2);
+			ft_putstr_fd("test\n", 2); //
 			ft_exit(data, NULL, -1);
 		}
 		ft_freecmdtable(data);
