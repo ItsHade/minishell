@@ -1,0 +1,36 @@
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ ^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ ecrire un truc ^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ sleep 15
+^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ sleep 5
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ ls | grep
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ cat
+^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ ctrl \
+> ^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ sleep 15
+^\Quit (core dumped)
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ ls | grep
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ cat
+^\Quit (core dumped)
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ exit
+exit
+➜  minishell2A18H10 git:(ma-main) ✗ cat
+^\[1]    1314265 quit (core dumped)  cat
+➜  minishell2A18H10 git:(ma-main) ✗ cat
+^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ cat <<he
+> hello
+> ^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ echo <<eo
+> ok
+> eo
+
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ echo <<eo
+> ^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ 
+

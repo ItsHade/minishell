@@ -1,0 +1,73 @@
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ ^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ ecrire un truc ^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ sleep 15
+^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ sleep 5
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ ls | grep
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ cat
+^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ ctrl \
+> ^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ sleep 15
+^\Quit (core dumped)
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ ls | grep
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ cat
+^\Quit (core dumped)
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ exit
+exit
+➜  minishell2A18H10 git:(ma-main) ✗ cat
+^\[1]    1314265 quit (core dumped)  cat
+➜  minishell2A18H10 git:(ma-main) ✗ cat
+^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ cat <<he
+> hello
+> ^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ echo <<eo
+> ok
+> eo
+
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ echo <<eo
+> ^C
+yzhuang@bess-f1r4s9:~/Documents/minishell2A18H10$ 
+
+tester:
+"echo   "he
+si tous builtin marchent que dans parent
+
+cat <<eof1 cat <<eof2
+
+cat <<eof1 | cat <<eof2
+
+Q:
+pipex: comment execv sait quand c commande quand c arg?
+why closed?
+echo a || echo b && echo c
+=> ac 
+
+echo a || (echo b && echo c)
+=> a
+
+$ echo a && echo b | tr a b
+a
+b
+
+Qui est différent de
+$ (echo a && echo b) | tr a b
+b
+b
+
+nous on interprete pas \, on le print comme un char normal
+yzhuang@paul-f4Br7s6:~$ echo -$PATH.
+-/mnt/nfs/homes/yzhuang/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin.
+yzhuang@paul-f4Br7s6:~$ echo -$PATH/.
+-/mnt/nfs/homes/yzhuang/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin/.
+yzhuang@paul-f4Br7s6:~$ echo -$PATH\.
+-/mnt/nfs/homes/yzhuang/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin.
+yzhuang@paul-f4Br7s6:~$ echo -$PATHok\.
+-.
+yzhuang@paul-f4Br7s6:~$ echo -$PATHok.
+-.

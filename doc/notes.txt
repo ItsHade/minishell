@@ -1,0 +1,134 @@
+USEFULL LINKS:
+
+
+Correction sheet: https://github.com/rphlr/42-Evals/tree/main/Cursus/Minishell
+
+42 Docs: https://harm-smits.github.io/42docs/projects/minishell
+
+Other minishell project (usefull to understand): https://www.lamsade.dauphine.fr/~bnegrevergne/ens/Unix/static/projet.pdf
+
+Shell syntax: https://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html
+
+Writing your own shell: https://www.cs.purdue.edu/homes/grr/SystemsProgrammingBook/Book/Chapter5-WritingYourOwnShell.pdf
+
+GitHub: https://github.com/Swoorup/mysh
+
+Pays du 42: http://i.paysdu42.fr/?page=minishell.c
+
+Other tutorial: https://carlagoeshacking.files.wordpress.com/2017/01/minisheel.pdf
+
+Lexer: https://dev.to/cad97/what-is-a-lexer-anyway-4kdo
+
+
+NOTES FOR MINISHELL PROJECT
+
+
+MINISHELL SHOULD NEVER CRASH
+HAVE NO LEAKS MEMORY AND FDS
+
+Do this in order
+lexer -> parser -> expander -> executor
+
+FUNCTIONS:
+
+printf, malloc, free, write, access, open, read, close, fork, wait, waitpid, signal,
+sigaction, sigemptyset, sigaddset, kill, exit, execve, dup, dup2, pipe
+
+strerror:
+retourne un pointeur vers une chaine de characters qui decrit le code d'erreur errnum
+
+perror:
+affiche un message d'erreur systeme dans la sortie d'erreur standard
+
+readline:
+lis une line dans le terminal et la retourne allouee avec malloc
+
+rl_clear_history:
+nettoye la liste d'historique en supprimant toutes les entrees
+
+rl_on_new_line:
+dis a la function d'update qu'on est passer a une nouvelle ligne vide
+
+rl_replace_line:
+remplace le contenu de rl_line_buffer par "text" 
+
+rl_redisplay:
+change ce qui est affiche sur l'ecran pour ce qui est contenu dans rl_line_buffer
+
+add_history:
+met la l'argument a la fin de la liste de l'historique
+
+wait3:
+delaye ce qui l'appelle jusqu'a ce qu'un signal d'un processus enfant se finissent ou se stop
+
+wait4:
+extension de wait3
+
+getcwd:
+retourn une chaine de characters null terminee qui contient un chemin absolu qui est le repertoire (qui fonctionne) du proccessus appelant.
+
+chdir:
+change le repertoire de travail actuel du processus avec celui dans path
+
+stat:
+retourne des informations sur un fichier
+
+lstat:
+pareil que stat mais si le lien du fichier est symbolique il rempli la structure avec les informations du lien symbolique
+
+fstat:
+pareil que stat mais prends un fd au lieu d'un path
+
+unlink:
+supprime un nom du systeme de fichier, si ce nom etait le dernier lien vers un fichier et le fichier est ouvert nulle part il est supprime 
+sinon il reste ouvert jusqu'a ce qu'il soit plus utilise 
+en cas de lien symbolic le lien est supprime
+
+opendir:
+ouvre un flux de repertoire
+
+readdir:
+retourne un pointeur sur une structure representant la prochaine entree de repertoire dans le flux de repertoire
+NULL si c'est la fin.
+
+closedir:
+ferme le flux de repertoire
+
+isatty:
+teste si fd est un file descriptor d'un terminal
+
+ttyname:
+retourne le chemin d'un terminal dont on a donne le fd
+
+ttyslot:
+retourne l'index de l'entree utilisateur actuel dans un fichier
+
+ioctl:
+(system call) qui manipule les parametres de fichier speciaux de l'appareil 
+
+getenv:
+cherche dans la liste de l'environement pour trouver la variable "name" et retourne un pointeur a la valeur correspondante
+
+tcsetattr:
+met les parametres associes au terminal fd
+
+tcgetattr:
+prends les parametres associes au terminal fd
+
+tgetent:
+charge l'entre pour "name" retourne 1 en cas de succes et 0 si il y a pas cette entree -1 en cas d'erreur
+
+tgetflag:
+retourne l'entre booleene de "id"
+
+tgetnum:
+retourne l'entre numerique de "id"
+
+tgetstr:
+retourn la chaine de characters d'entre de "id"
+
+tgoto:
+cette routine instancie les parametres dans les capacites donnees, ca valeur de retour doit etre passe a tputs
+
+tputs:
+cette routine peux recuperer les capacites par nom termcap ou terminfo
