@@ -140,7 +140,6 @@ int	minishell(t_data *data)
 		if (ft_execute(data, &data->env) == -1)
 		{
 			ft_freecmdtable(data);
-			ft_putstr_fd("test\n", 2); //
 			ft_exit(data, NULL, -1);
 		}
 		ft_freecmdtable(data);

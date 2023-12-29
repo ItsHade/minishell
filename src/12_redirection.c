@@ -33,7 +33,6 @@ int	ft_open_here_doc(t_data *data, int i)
 	return (g_return);
 }
 
-//int 	ft_open_files(t_data *data) // still need to figure out modes for >> (OAPPEND)
 int	ft_open_file(t_data *data, char *file, int mode, int i)
 {
 	if (mode == I_RDR)
@@ -79,13 +78,10 @@ int	ft_io_file(t_data *data, t_envp **envp, int i, int is_pipe)
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(data->commands[i].files[a], 2);
-			ft_putstr_fd(": ambiguous redirect\n", 2);
-			
+			ft_putstr_fd(": ambiguous redirect\n", 2);			
 		}
 		if (ft_open_file(data, data->commands[i].files[a], data->commands[i].redir[a], i) == -1)
 		{
-			//
-			ft_putstr_fd("FILE FAILED TO OPEN\n", 2);
 			if (is_pipe == 1)
 			{
 				ft_freecmdtable(data);

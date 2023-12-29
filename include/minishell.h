@@ -91,7 +91,6 @@ typedef struct s_clean
 	t_token    *token_list;
 }   t_clean;
 
-//modifier struct t_envp *env not needed here
 typedef struct s_data
 {
 	t_command   *commands;
@@ -193,7 +192,6 @@ int     is_option_n(char *s);
 
 int     do_echo(t_command *cmd);
 
-
 /* ENV */
 
 void	free_content(char **content);
@@ -216,7 +214,9 @@ char	**split_env(char *s);
 
 /* EXPORT */
 
-//idk if should go here
+int	build_new_envp(char *name, char *value, t_envp **ep);
+
+int	export_error(char *name, char *value, char *cmd);
 
 t_envp	*ft_lstlast_ev(t_envp *lst);
 
@@ -226,7 +226,7 @@ void	ft_free(void *to_free);
 
 char	*ft_getenv(char *env_name, t_envp *ep);
 
-/* EXPORT */
+char	**add_content(char *name, char *value);
 
 int	do_export(char *name, char *value, t_envp **ep, char *cmd);
 
@@ -272,14 +272,6 @@ int     ft_next_word_len(char *line, int *i, char *sep, char *meta);
 
 int     ft_get_token_list(t_token **token_list, char *line, char *sep, char *meta);
 
-/* SPLIT */
-
-int     ft_wordcount(char *s, char c);
-
-int     ft_getwordlen(char *s, char c, int i);
-
-char	**ft_split(char const *s, char c);
-
 /* UTILS */
 
 char    *ft_strjoinf(char *s1, char *s2);
@@ -291,16 +283,6 @@ int     is_env(int c);
 int     ft_is_absolute(char *cmd);
 
 char	*ft_findcmdpath(char *cmd, char **envp, char *tmp, char *cmd_path);
-
-/* PUT */
-
-void	ft_error_msg(char *file, char *msg, int ret);
-
-void	ft_putchar(char c);
-
-void	ft_putstr(char *str);
-
-void	ft_putstr_fd(char *str, int fd);
 
 /* BUILTIN */
 
@@ -367,6 +349,8 @@ void	ft_freetab(char **tab);
 void	ft_freecmdtable(t_data *data);
  
 /* ERROR */
+
+void	ft_error_msg(char *file, char *msg, int ret);
 
 void    ft_error(char *s, char *err);
 

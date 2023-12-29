@@ -94,7 +94,7 @@ int	ft_exec_cmd(t_data *data, t_envp **envp, int i)
 	return (0);
 }
 
-int	ft_execute(t_data *data, t_envp **envp) //??pkoi faut dup // pour remettre les std comme avant
+int	ft_execute(t_data *data, t_envp **envp)
 {
 	int	i;
 
@@ -104,12 +104,7 @@ int	ft_execute(t_data *data, t_envp **envp) //??pkoi faut dup // pour remettre l
 	data->stdin = dup(STDIN_FILENO);
 	data->stdout = dup(STDOUT_FILENO);
 	if (ft_check_here_doc(data) == -1)
-	{
-		// if (dup2(data->stdin, STDIN_FILENO) == -1) //??repeter //c'etait pour l'ancienne version des here doc
-		// 	return (ft_close_std(data), -1);
-		fprintf(stderr, "ERROR IN HEREDOC\n");
 		return (ft_close_std(data), -1);
-	}
 	if (ft_exec_cmd(data, envp, i) == -1)
 		return (ft_close_std(data), -1);
 	if (dup2(data->stdin, STDIN_FILENO) == -1)

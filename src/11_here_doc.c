@@ -45,6 +45,9 @@ int	ft_here_doc2(char *limiter, int fd)
 		{
 			return (free(ptr), -1);
 		}
+		ptr = ft_strjoinf(ptr, "\n");
+		if (!ptr)
+			return (perror("malloc in strjoinf"), -1);
 		ft_putstr_fd(ptr, fd);
 		free(ptr);
 	}
@@ -71,13 +74,14 @@ int	ft_here_doc(char *limiter, int i)
 		return (perror(file), -1);
 	signal(SIGINT, ft_here_doc_signal);
 	signal(SIGQUIT, SIG_IGN);
-	ft_here_doc2(limiter, fd);
+	if (ft_here_doc2(limiter, fd) == -1)
+		return (-1);
 	close(fd);
 	signal(SIGINT, ft_signal);
 	return (0);
 }
 
-int ft_is_here_doc(t_data *data, int i, int *nb_doc) //?? *nb_doc
+int ft_is_here_doc(t_data *data, int i, int *nb_doc)
 {
 	int	a;
 
@@ -104,7 +108,7 @@ int ft_check_here_doc(t_data *data)
 	while (++i < data->nb_cmd)
 	{
 		a = 0;
-		j = -1; //this WAS THE ERROR (j = 0)
+		j = -1;
 		if (ft_is_here_doc(data, i, &nb_doc) < 1)
 			continue ;
 		while (++j < nb_doc)

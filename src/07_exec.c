@@ -22,7 +22,7 @@ int    ft_exec(char **command, t_envp **envp)
 	path = ft_findcmdpath(command[0], env, NULL, NULL);
 	if (!path && ft_getenv("PATH", *envp) != NULL)
 		return (ft_error_msg(command[0], NOTFOUND, 127), ft_freetab(env), g_return);
-	else
+	else if (!path)
 		return (ft_error_msg(command[0], NOFILE, 127), ft_freetab(env), g_return);
 	if (execve(path, command, env) == -1)
 	{
