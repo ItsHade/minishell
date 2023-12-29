@@ -12,17 +12,11 @@ char	*get_ab_path(char *path) // return malloquÃ©
 	filename = NULL;
 	cwd = getcwd(cwd, 0); //  /Users/Documents/2711
 	if (path[0] == '.' && path[1] == '/')
-	{
 		filename = ft_substr(path, 1, ft_strlen(path) - 1); // av /filename
-		if (!filename)
-			return (perror("malloc"), NULL);
-	}
 	else
-	{
 		filename = ft_strjoin("/", path);
-		if (!filename)
-			return (perror("malloc"), NULL);
-	}
+	if (!filename)
+		return (perror("malloc"), ft_fail_alloc(), NULL);
 	t = ft_strjoinf(cwd, filename);
 	free(filename);
 	if (!t)
@@ -43,19 +37,19 @@ int	do_cd(char *path, t_envp **ep)
 	f = 1;
 	original_pwd = NULL;
 	t = NULL;
-	if (path == NULL)
+	if (path == NULL || (path[0] == '~' && (!path[1] || path[1] == '/')) )
 	{
 		t = ft_getenv("HOME", *ep);
 		f = 0;
 		if (!t)
-			ft_putstr_fd("minishell: cd: HOME not set\n", 2);
+			return (ft_putstr_fd("minishell: cd: HOME not set\n", 2), 1);
 	}
 	else if ((path[0] == '.' && path[1] == '/') || (path[0] != '.' && path[0] != '/')) // ./   ou document  ou ~/documents
 		t = get_ab_path(path);
-	else // ..   ou /
+	else
 		t = ft_strdup(path);
 	if (!t)
-		return (1);
+		return (-1);
 	//printf("check t %s\n", t);
 	dirp = opendir(t);
 	if (!dirp)

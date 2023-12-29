@@ -118,7 +118,10 @@ int	minishell(t_data *data)
 	while (1)
 	{
 		if (g_return == -1)
+		{
+			ft_putstr_fd("EXITING MALLOC\n", 2);
 			ft_exit(data, NULL, -1);
+		}
 		signal(SIGINT, ft_signal);
 		signal(SIGQUIT, SIG_IGN);
 		line = ft_get_line(data, line);
@@ -136,9 +139,14 @@ int	minishell(t_data *data)
 		}
 		if (ft_parsing(&token_list, data) == -1) 
 			continue;
+		//
+		// ft_putlst(&token_list);
 		ft_lstclear(&token_list);
+		//
+		// ft_putcmdtable(data);
 		if (ft_execute(data, &data->env) == -1)
 		{
+			ft_putstr_fd("EXITING HERE\n", 2);
 			ft_freecmdtable(data);
 			ft_exit(data, NULL, -1);
 		}

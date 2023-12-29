@@ -52,9 +52,10 @@ int	syntax_error(t_token **tl)
 	{
 		if ((cur->label == I_RDR || cur->label == O_RDR || cur->label == HEREDOC || cur->label == OAPPEND) && (!cur->next))
 		{
-			ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
-			g_return = 2;
-			return (1);
+			// ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+			// g_return = 2;
+			// return (1);
+			break;
 		}
 		if ((cur->label == I_RDR || cur->label == O_RDR || cur->label == HEREDOC || cur->label == OAPPEND) && (cur->next->label != WORD))
 			break;
@@ -69,7 +70,10 @@ int	syntax_error(t_token **tl)
 	if (cur)
 	{
 		g_return = 2;
-		printf("minishell: syntax error near unexpected token `%s'\n", (char *)cur->value);
+		if (cur->next)
+				printf("minishell: syntax error near unexpected token `%s'\n", (char *)cur->next->value);
+		else
+			printf("minishell: syntax error near unexpected token `newline'\n");
 		return (1);
 	}
 	return (0);

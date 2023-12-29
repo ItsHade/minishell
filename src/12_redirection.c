@@ -67,6 +67,8 @@ int	ft_open_file(t_data *data, char *file, int mode, int i)
 	return (g_return);
 }
 
+
+//a revoir
 int	ft_io_file(t_data *data, t_envp **envp, int i, int is_pipe)
 {
 	int	a;
@@ -74,13 +76,13 @@ int	ft_io_file(t_data *data, t_envp **envp, int i, int is_pipe)
 	a = 0;
 	while (a < data->commands[i].nb_io)
 	{
-		if (data->commands[i].files[a] == NULL)
+		if (data->commands[i].files[a] == NULL) // ou starting with $
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(data->commands[i].files[a], 2);
-			ft_putstr_fd(": ambiguous redirect\n", 2);			
+			ft_putstr_fd(": ambiguous redirect\n", 2);
 		}
-		if (ft_open_file(data, data->commands[i].files[a], data->commands[i].redir[a], i) == -1)
+		else if (ft_open_file(data, data->commands[i].files[a], data->commands[i].redir[a], i) == -1)
 		{
 			if (is_pipe == 1)
 			{

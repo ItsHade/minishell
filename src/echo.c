@@ -49,7 +49,7 @@ void	clear_exp(t_exp **exp)
 	*exp = NULL;
 }
 
-int	add_new_exp(t_exp **exp, char *str) //, int start, int n)
+int	add_new_exp(t_exp **exp, char *str)
 {
 	t_exp	*new_exp;
 
@@ -61,7 +61,6 @@ int	add_new_exp(t_exp **exp, char *str) //, int start, int n)
 		g_return = -1;
 		return (-1);
 	}
-	//new_exp->s = ft_substr(s, start, n);
 	new_exp->s = str;
 	new_exp->next = NULL;
 	ft_lstadd_back_exp(exp, new_exp);
@@ -106,7 +105,7 @@ int	do_dollar(t_exp **exp, char *s, int i, t_envp *ep)
 		return (i);
 	if (s[i] && (s[i] == '$' || s[i] == '?'))
 	{
-		env_name = ft_substr(s, i, 1); //given $ or ?
+		env_name = ft_substr(s, i, 1);
 		if (add_exp_value(exp, env_name, ep) == -1)
 			return (-1);
 		i++;
@@ -121,44 +120,48 @@ int	do_dollar(t_exp **exp, char *s, int i, t_envp *ep)
 		if (add_exp_value(exp, env_name, ep) == -1)
 			return (-1);
 	}
-	env_name = NULL;
 	return (i);
 }
 
-int	do_dq(t_exp **exp, char *s, int i, t_envp *ep)
+int	do_not_exp_dq(t_exp **exp, char *s, int i)
 {
 	int	start;
 
+	start = i;
+	if (s[i] == '$')
+		i++;
+	if (s[i] && s[i] == '$')
+		i++;
+	while (s[i] && s[i] != '\"' && s[i] != '$')
+		i++;
+	if (add_new_exp(exp, ft_substr(s, start, i - start)) == -1)
+		return (-1);
+	return (i);
+}
+
+
+int	do_dq(t_exp **exp, char *s, int i, t_envp *ep)
+{
 	i++;
 	if (s[i] == '\"')
 		return (i + 1);
 	while (s[i] && s[i] != '\"')
 	{
-		if (s[i] == '$' && s[i + 1] && (is_env(s[i + 1]) || s[i + 1] == '$' || s[i + 1] == '?'))
-		{
-			i = do_dollar(exp, s, i, ep); //le prochain, " ou } etc
-			if (i == -1)
-				return (-1);
-		}	
+		if (s[i] == '$' && s[i + 1] && (is_env(s[i + 1])
+				|| s[i + 1] == '$' || s[i + 1] == '?'))
+			i = do_dollar(exp, s, i, ep);
 		else
-		{
-			start = i;
-			if (s[i] == '$') //a v
-				i++;
-			while (s[i] && s[i] != '\"' && s[i] != '$')
-				i++;
-			if (add_new_exp(exp, ft_substr(s, start, i - start)) == -1)
-				return (-1);
-		}
+			i = do_not_exp_dq(exp, s, i);
+		if (i == -1)
+			return (-1);
 	}
-	return (i + 1);//apres ""
+	return (i + 1);
 }
-
 
 int	do_sq(t_exp **exp, char *s, int i)
 {
 	int	start;
-	
+
 	i++;
 	start = i;
 	while (s[i] && s[i] != '\'')
@@ -168,29 +171,21 @@ int	do_sq(t_exp **exp, char *s, int i)
 		if (add_new_exp(exp, ft_substr(s, start, i - start)) == -1)
 			return (-1);
 	}	
-	i++;
-	return (i);
+	return (i + 1);
 }
 
-int	do_not_exp(t_exp **exp, char *s, int i) //peut static
+int	do_not_exp(t_exp **exp, char *s, int i)
 {
 	int	start;
-	
-	if (s[i] == '\'')
-		i = do_sq(exp, s, i);
-	else
-	{
-		start = i;
-		if (s[i] == '$')
-			i++;
-		if (s[i] && s[i] == '$')
-			i++;
-		while (s[i] && s[i] != '\'' && s[i] != '\"' && s[i] != '$')
-			i++;
-		if (add_new_exp(exp, ft_substr(s, start, i - start)) == -1)
-			return (-1);
-	}
-	if (i == -1)
+
+	start = i;
+	if (s[i] == '$')
+		i++;
+	if (s[i] && s[i] == '$')
+		i++;
+	while (s[i] && s[i] != '\'' && s[i] != '\"' && s[i] != '$')
+		i++;
+	if (add_new_exp(exp, ft_substr(s, start, i - start)) == -1)
 		return (-1);
 	return (i);
 }
@@ -209,24 +204,26 @@ int	do_quote_exp(t_exp **exp, char *s, t_envp *ep)
 	}
 	while (s[i])
 	{
-		if (s[i] == '\"')
+		if (s[i] == '\'')
+			i = do_sq(exp, s, i);
+		else if (s[i] == '\"')
 			i = do_dq(exp, s, i, ep);
 		else if (s[i] == '$' && s[i + 1] && (is_env(s[i + 1])
 				|| s[i + 1] == '?' || s[i + 1] == '\"' || s[i + 1] == '\''))
 			i = do_dollar(exp, s, i, ep);
 		else
 			i = do_not_exp(exp, s, i);
+		if (i == -1)
+			return (-1);
 	}
-	if (i == -1)
-		return (-1);
 	return (0);
 }
 
 int	do_tilde(t_exp **exp, char *s, t_envp *ep)
 {
 	char	*t;
-	int	start;
-	int	i;
+	int		start;
+	int		i;
 	char	*substr;
 
 	substr = NULL;
@@ -240,8 +237,12 @@ int	do_tilde(t_exp **exp, char *s, t_envp *ep)
 	while (s[i] && s[i] != '\'' && s[i] != '\"' && s[i] != '$')
 		i++;
 	substr = ft_substr(s, start, i - start);
+	if (!substr)
+		return (-1);
 	t = ft_strjoin(t, substr);
 	ft_free(substr);
+	if (!t)
+		return (-1);
 	if (add_new_exp(exp, t) == -1)
 		return (-1);
 	return (i);

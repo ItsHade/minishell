@@ -1,16 +1,6 @@
 #include "../include/minishell.h"
 
-void	ft_freemalloc(char **strs, int a)
-{
-	while (a >= 0)
-	{
-		free(strs[a]);
-		a--;
-	}
-	free(strs);
-}
-
-int	ft_is_sep(char c, char *sep)
+int	ft_is_sep(char c, const char *sep)
 {
 	int	i;
 
@@ -24,7 +14,7 @@ int	ft_is_sep(char c, char *sep)
 	return (0);
 }
 
-int	ft_count_words(char *line, char *sep, char *meta)
+int	ft_count_words(char *line, const char *sep, const char *meta)
 {
 	int	count;
 	int	i;
@@ -39,38 +29,6 @@ int	ft_count_words(char *line, char *sep, char *meta)
 	return (count);
 }
 /*
-	int	in_quotes;
-	int	len;
-	int		stacked;
-	char	quote;
-	char	quotes[4] = "'\"";
-
-	in_quotes = 0;
-	len = 0;
-	while (line[*i] && ft_is_sep(line[*i], sep))
-		(*i)++;
-	while (line[*i])
-	{
-		if (line[*i] && ft_is_sep(line[*i], meta) && in_quotes == 0 && len == 0)
-		{
-			stacked = 0;
-			while (line[*i] && ft_is_sep(line[*i], meta) && in_quotes == 0 && stacked < 2)
-			{
-				if (line[*i] == '|')
-					stacked = 3;
-				(*i)++;
-				len++;
-				stacked++;
-			}
-			break;
-		}
-*/
-
-//cat << end > out | ls -la
-
-
-int	ft_next_word_len(char *line, int *i, char *sep, char *meta)
-{
 	int	in_quotes;
 	int	len;
 	char		m;
@@ -92,6 +50,36 @@ int	ft_next_word_len(char *line, int *i, char *sep, char *meta)
 				len++;
 				if (m == '|')
 					break;
+			}
+			break;
+		}
+*/
+
+//need to split this for norm
+int	ft_next_word_len(char *line, int *i, const char *sep, const char *meta)
+{
+	int	in_quotes;
+	int	len;
+	int		stacked;
+	char	quote;
+	const char	quotes[4] = "'\"";
+
+	in_quotes = 0;
+	len = 0;
+	while (line[*i] && ft_is_sep(line[*i], sep))
+		(*i)++;
+	while (line[*i])
+	{
+		if (line[*i] && ft_is_sep(line[*i], meta) && in_quotes == 0 && len == 0)
+		{
+			stacked = 0;
+			while (line[*i] && ft_is_sep(line[*i], meta) && in_quotes == 0 && stacked < 2)
+			{
+				if (line[*i] == '|')
+					stacked = 3;
+				(*i)++;
+				len++;
+				stacked++;
 			}
 			break;
 		}
@@ -123,7 +111,7 @@ int	ft_next_word_len(char *line, int *i, char *sep, char *meta)
 	return (len);
 }
 
-char	*ft_get_next_word(char *line, int *i, char *sep, char *meta)
+char	*ft_get_next_word(char *line, int *i, const char *sep, const char *meta)
 {
 	char *word;
 	int	a;
@@ -145,7 +133,7 @@ char	*ft_get_next_word(char *line, int *i, char *sep, char *meta)
 	return (word);
 }
 
-int ft_get_token_list(t_token **token_list, char *line, char *sep, char *meta)
+int ft_get_token_list(t_token **token_list, char *line, const char *sep, const char *meta)
 {
 	int	nb_of_tokens;
 	int	a;

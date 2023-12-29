@@ -13,7 +13,7 @@ int	ft_expand_cmd(t_data *data, t_envp **env, int i) //echo \n  OU  << outfile
 	if (data->commands[i].cmd_arg == NULL)
 		return (0);
 	//data->commands[i].is_null = ft_calloc(sizeof(int), (data->commands[i].nb_arg + 1));
-	while (data->commands[i].cmd_arg[a] != NULL)
+	while (data->commands[i].cmd_arg[a] != NULL)  //"l$LS" $no ""
 	{
 		if (do_quote_exp(&exp, data->commands[i].cmd_arg[a], *env) == -1)
 			return (-1); //""   ''    $NO
@@ -35,6 +35,7 @@ int	ft_expand_cmd(t_data *data, t_envp **env, int i) //echo \n  OU  << outfile
 	}
 	return (0);
 }
+
 
 int	ft_expand_files(t_data *data, t_envp **env, int i)
 {

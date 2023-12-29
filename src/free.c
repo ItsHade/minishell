@@ -22,6 +22,15 @@ void	ft_freetab(char **tab)
 	ft_free(tab);
 }
 
+void	ft_freemalloc(char **strs, int a)
+{
+	while (a >= 0)
+	{
+		free(strs[a]);
+		a--;
+	}
+	free(strs);
+}
 
 void	ft_freecmdtable(t_data *data)
 {

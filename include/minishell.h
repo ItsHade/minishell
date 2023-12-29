@@ -63,11 +63,14 @@ typedef struct s_token_list
 	struct s_token_list *prev;
 }   t_token;
 
+//Avant expand avant exec
+//TEST=infile
+//<$TEST ls -la >$RIEN
 typedef struct s_command
 {
-	char    **cmd_arg;
-	char    **files;
-	int     *redir;
+	char    **cmd_arg; // {"ls", "-la", NULL}
+	char    **files; // {"$TEST", "$RIEN", NULL} //2e exp -> si c'est NULL ou VIDE ou PLS MOTS on expand pas (garde $RIEN)
+	int     *redir; // {"I_REDIR", "O_REDIR", NULL}
 	//int		*is_null;
 	int     nb_io;
 	int		nb_arg;
@@ -260,17 +263,15 @@ int     do_exit(t_data *data, t_envp **ep, int i, int is_pipe);
 
 /* FT_SPLIT */
 
-void	ft_freemalloc(char **strs, int a);
-
 void	*ft_calloc(size_t nmemb, size_t size);
 
 void	ft_bzero(void *s, size_t n);
 
-int     ft_is_sep(char c, char *sep);
+int     ft_is_sep(char c, const char *sep);
 
-int     ft_next_word_len(char *line, int *i, char *sep, char *meta);
+int     ft_next_word_len(char *line, int *i, const char *sep, const char *meta);
 
-int     ft_get_token_list(t_token **token_list, char *line, char *sep, char *meta);
+int     ft_get_token_list(t_token **token_list, char *line, const char *sep, const char *meta);
 
 /* UTILS */
 
@@ -345,6 +346,8 @@ int		ft_expand_files(t_data *data, t_envp **env, int i);
 void	ft_free(void *to_free);
 
 void	ft_freetab(char **tab);
+
+void	ft_freemalloc(char **strs, int a);
 
 void	ft_freecmdtable(t_data *data);
  

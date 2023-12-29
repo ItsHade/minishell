@@ -43,7 +43,7 @@ int	ft_here_doc2(char *limiter, int fd)
 			return (0);
 		if (ft_strcmp(ptr, limiter) == 0)
 		{
-			return (free(ptr), -1);
+			return (free(ptr), 0);
 		}
 		ptr = ft_strjoinf(ptr, "\n");
 		if (!ptr)

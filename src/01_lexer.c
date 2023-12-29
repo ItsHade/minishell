@@ -17,9 +17,9 @@ int	ft_get_token(char *value)
 		return (HEREDOC);
 	else if (ft_strcmp(value, ">>") == 0)
 		return (OAPPEND);
-	else if (ft_strncmp(value, "<<<", 3) == 0)
+	else if (ft_strcmp(value, "><") == 0)
 		return (SYNTAX);
-	else if (ft_strncmp(value, ">>>", 3) == 0)
+	else if (ft_strcmp(value, "<>") == 0)
 		return (SYNTAX);
 	else
 		return (WORD);
