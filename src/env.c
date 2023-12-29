@@ -30,43 +30,28 @@ void	free_content(char **content)
 char	**split_env(char *s) //if !s?  =ok  =  ok  ok=  
 {
 	int		i;
-	char	**content;
 	int	tlen;
 
 	i = 0;
 	tlen = 0;
-	content = NULL;
 	if (s[0] == '=' || !s[0])
 	{
 		printf("Minishell: export: `%s': not a valid identifier\n", s);
 		g_return = 1;
 		return (NULL);
 	}
-	content = ft_calloc(sizeof(char *), 3);
-	if (!content)
-	{
-		perror("malloc");
-		return (NULL);
-	}
 	while (s[i] && s[i] != '=')
 		i++;
 	if (s[i] == '=')
 	{
-		content[0] = ft_substr(s, 0, i);
 		tlen = ft_strlen(s) - i - 1;
 		if (tlen)
-			content[1] = ft_substr(s, i + 1, tlen);
+			return (add_content(ft_substr(s, 0, i), ft_substr(s, i + 1, tlen)));
 		else
-			content[1] = NULL;
-		content[2] = NULL;
+			return (add_content(ft_substr(s, 0, i), NULL));
 	}
 	else
-	{
-		content[0] = ft_substr(s, 0, i);
-		content[1] = NULL;
-		content[2] = NULL;
-	}
-	return (content);
+		return (add_content(ft_substr(s, 0, i), NULL));
 }
 
 int	add_new_envp(t_envp **ep, char **content)
@@ -85,6 +70,7 @@ int	add_new_envp(t_envp **ep, char **content)
 	//printf("content0=%s, content1=%s\n", new_ep->content[0], new_ep->content[1]);
     new_ep->next = NULL;
 	ft_lstadd_back_ev(ep, new_ep);
+	g_return = 0;
 	return (0);
 }
 
@@ -112,28 +98,36 @@ int	ft_get_shell_level(t_envp **ep)
 	return (0);
 }
 
+int	set_empty_env(t_envp **ep) //can static
+{
+	char *s;
+
+	s = NULL;
+	ft_putstr_fd("Launched with env -i ?\n", 2); //ae??
+	s = ft_strjoin("PWD=", getcwd(s, 1024));
+	if (!s)
+		return (ft_fail_alloc(), -1);
+	if (add_new_envp(ep, split_env(s)) == -1)
+		return (-1);
+	free(s);
+	s = ft_strdup("SHLVL=1");
+	if (!s)
+		return (ft_fail_alloc(), -1);
+	if (add_new_envp(ep, split_env(s)) == -1)
+		return (-1);
+	free(s);
+	return (0);
+}
+
 int	set_env(t_envp **ep, char **envp)
 {
 	int	i;
-	char *s;
 
 	i = 0;
-	s = NULL;
 	if (envp == NULL || envp[0] == NULL) 
 	{
-		ft_putstr_fd("Launched with env -i ?\n", 2);
-		s = ft_strjoin("PWD=", getcwd(s, 1024));
-		if (!s)
-			return (ft_fail_alloc(), -1);
-		if (add_new_envp(ep, split_env(s)) == -1)
+		if (set_empty_env(ep) == -1)
 			return (-1);
-		free(s);
-		s = ft_strdup("SHLVL=1");
-		if (!s)
-			return (ft_fail_alloc(), -1);
-		if (add_new_envp(ep, split_env(s)) == -1)
-			return (-1);
-		free(s);
 	}
 	while (envp[i])
 	{

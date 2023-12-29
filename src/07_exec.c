@@ -16,12 +16,14 @@ int    ft_exec(char **command, t_envp **envp)
 	if (!command)
 		return (ft_freetab(env), g_return);
 	if (ft_is_absolute(command[0]) == 0)
-		return (ft_exec_abs(command, env));\
+		return (ft_exec_abs(command, env));
 	else if (ft_is_absolute(command[0]) == 2)
 		return (ft_error_msg(command[0], PERM, 126), ft_freetab(env), g_return);
 	path = ft_findcmdpath(command[0], env, NULL, NULL);
-	if (!path)
+	if (!path && ft_getenv("PATH", *envp) != NULL)
 		return (ft_error_msg(command[0], NOTFOUND, 127), ft_freetab(env), g_return);
+	else
+		return (ft_error_msg(command[0], NOFILE, 127), ft_freetab(env), g_return);
 	if (execve(path, command, env) == -1)
 	{
 		fprintf(stderr, "EXECVE returned -1\n");

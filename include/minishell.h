@@ -31,6 +31,7 @@
 # include "../libft/libft.h"
 
 #define NOTFOUND "command not found"
+#define NOFILE	"No such file or directory"
 #define ISDIR	"Is a directory"
 #define PERM	"Permission denied"
 

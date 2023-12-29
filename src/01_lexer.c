@@ -56,7 +56,8 @@ int	add_dollar_str(char **line, int i, t_envp *ep)
 	env_name = ft_substr(*line, i_dollar + 1, i - i_dollar - 1);
 	if (!env_name)
 		return (-1);
-	if (ft_getenv(env_name, ep) || (!ft_getenv(env_name, ep) && (!(*line)[i] || (*line)[i] == '$')))
+	if (ft_getenv(env_name, ep) || (!ft_getenv(env_name, ep)
+		&& (!(*line)[i] || (*line)[i] == ' ' || (*line)[i] == '	' || (*line)[i] == '|' || (*line)[i] == '$')))
 	{		
 		t1 = ft_substr(*line, 0, i_dollar);
 		t2 = ft_substr(*line, i, ft_strlen(*line) - i);
@@ -102,10 +103,8 @@ int	expand_line(char **line, t_envp *ep)
 	return (0);
 }
 
-
 int	ft_lexer(t_token **token_list, char **line, t_data *data)
 {
-	//printf("avant-%s-\n", *line);
 	if (expand_line(line, data->env) == -1)
 		return (-1);
 	if (!((*line)[0]))
@@ -114,9 +113,7 @@ int	ft_lexer(t_token **token_list, char **line, t_data *data)
 		*line = NULL;
 		return (0);
 	}
-	//printf("apres-%s-\n", *line);
 	ft_get_token_list(token_list, *line, " 	", "|<>");
-	if (ft_tokenize(token_list) == -1) //??aucun cas
-		ft_putstr_fd("Something went wrong with the token list\n", 2);
+	ft_tokenize(token_list);
 	return (0);
 }

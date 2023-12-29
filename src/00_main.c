@@ -128,19 +128,15 @@ int	minishell(t_data *data)
 			ft_exit(data, line, -1);
 		if (!line)
 			continue;
-		//
-		// ft_putlst(&token_list);
 		ft_free(line);
 		if (syntax_error(&token_list))
 		{
 			ft_lstclear(&token_list);
 			continue ;
 		}
-		if (ft_parsing(&token_list, data) == -1)
-			continue; //??
+		if (ft_parsing(&token_list, data) == -1) 
+			continue;
 		ft_lstclear(&token_list);
-		//
-		// ft_putcmdtable(data);
 		if (ft_execute(data, &data->env) == -1)
 		{
 			ft_freecmdtable(data);
@@ -156,13 +152,7 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	t_data	data;
-	// struct sigaction	sa;
 
-	// sa.sa_sigaction = &ft_signal;
-	// sigemptyset(&sa.sa_mask);
-	// sa.sa_flags = SA_SIGINFO;
-	// sigaction(SIGINT, &sa, NULL);
-	// sigaction(SIGQUIT, &sa, NULL);
 	data.env = NULL;
 	set_env(&data.env, envp);
 	minishell(&data);
