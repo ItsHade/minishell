@@ -16,20 +16,24 @@ int    ft_exec(char **command, t_envp **envp)
 	if (!command)
 		return (ft_freetab(env), g_return);
 	if (ft_is_absolute(command[0]) == 0)
-		return (ft_exec_abs(command, env));
+		return (ft_exec_abs(command, env));\
+	else if (ft_is_absolute(command[0]) == 2)
+		return (ft_error_msg(command[0], PERM, 126), ft_freetab(env), g_return);
 	path = ft_findcmdpath(command[0], env, NULL, NULL);
 	if (!path)
-		return (ft_cmd_not_found(command[0], 127), ft_freetab(env), g_return);
+		return (ft_error_msg(command[0], NOTFOUND, 127), ft_freetab(env), g_return);
 	if (execve(path, command, env) == -1)
 	{
-		if (errno == EACCES)
-			ft_cmd_not_found(command[0], 126);
+		fprintf(stderr, "EXECVE returned -1\n");
+		if (errno == EACCES) //pour quels cas ? 
+			ft_error_msg(command[0], NOTFOUND, 127); //changed from 126 to 127 for ""
 		else
 		{
+			fprintf(stderr, "errno is not EACCESS\n");
 			ft_error(NULL, command[0]);
 			g_return = 127;
 		}
-		return (free(path), ft_freetab(env), g_return);
+		return (ft_free(path), ft_freetab(env), g_return);
 	}
 	return (0);
 }

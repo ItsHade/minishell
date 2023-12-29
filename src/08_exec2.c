@@ -5,20 +5,19 @@ extern int g_return;
 
 int	ft_exec_abs(char **command, char **envp)
 {
+	//
+	printf("IS ABS\n");
 	if (execve(command[0], command, envp) == -1)
 	{
-		if (command[0][0] == '/')
+		// if (command[0][0] == '/') //doesn't include all directories
+		if (access(command[0], F_OK | X_OK) == 0)
 		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(command[0], 2);
-			ft_putstr_fd(": Is a directory\n", 2);
-			g_return = 126;
+			printf("ACCESSABLE\n");
+			ft_error_msg(command[0], ISDIR, 126);
 			ft_freetab(envp);
 			return (g_return);
 		}
-		g_return = 127;
-		ft_putstr_fd("minishell: ", 2);
-		ft_cmd_not_found(command[0], 127);
+		ft_error_msg(command[0], NOTFOUND, 127);
 		ft_freetab(envp);
 		return (g_return);
 	}
@@ -36,7 +35,8 @@ int	ft_is_absolute(char *cmd)
 	}
 	if (access(cmd, F_OK | X_OK) == 0)
 		return (0);
-	printf("NOT ABS: %s\n", cmd);
+	else if (access(cmd, F_OK) == 0 && access(cmd, X_OK) != 0)
+		return (2);
 	return (-1);
 }
 
@@ -107,6 +107,7 @@ int	ft_execute(t_data *data, t_envp **envp) //??pkoi faut dup // pour remettre l
 	{
 		// if (dup2(data->stdin, STDIN_FILENO) == -1) //??repeter //c'etait pour l'ancienne version des here doc
 		// 	return (ft_close_std(data), -1);
+		fprintf(stderr, "ERROR IN HEREDOC\n");
 		return (ft_close_std(data), -1);
 	}
 	if (ft_exec_cmd(data, envp, i) == -1)

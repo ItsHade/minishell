@@ -100,12 +100,11 @@ int ft_check_here_doc(t_data *data)
 	int i;
 	char *limiter;
 
-	j = -1;
 	i = -1;
 	while (++i < data->nb_cmd)
 	{
 		a = 0;
-		j = 0;
+		j = -1; //this WAS THE ERROR (j = 0)
 		if (ft_is_here_doc(data, i, &nb_doc) < 1)
 			continue ;
 		while (++j < nb_doc)

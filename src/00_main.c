@@ -138,11 +138,9 @@ int	minishell(t_data *data)
 		}
 		if (ft_parsing(&token_list, data) == -1)
 			continue; //??
-		//
-		ft_putlst(&token_list);
 		ft_lstclear(&token_list);
 		//
-		ft_putcmdtable(data);
+		// ft_putcmdtable(data);
 		if (ft_execute(data, &data->env) == -1)
 		{
 			ft_freecmdtable(data);

@@ -30,6 +30,10 @@
 
 # include "../libft/libft.h"
 
+#define NOTFOUND "command not found"
+#define ISDIR	"Is a directory"
+#define PERM	"Permission denied"
+
 typedef enum e_label
 {
 	EMPTY = 0,
@@ -289,7 +293,7 @@ char	*ft_findcmdpath(char *cmd, char **envp, char *tmp, char *cmd_path);
 
 /* PUT */
 
-void	ft_cmd_not_found(char *file, int ret);
+void	ft_error_msg(char *file, char *msg, int ret);
 
 void	ft_putchar(char c);
 

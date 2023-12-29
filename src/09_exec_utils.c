@@ -9,12 +9,14 @@ void	ft_close_std(t_data *data)
 	close(data->stdout);
 }
 
-void	ft_cmd_not_found(char *file, int ret)
+void	ft_error_msg(char *file, char *msg, int ret)
 {
 	g_return = ret;
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(file, 2);
-	ft_putstr_fd(": command not found\n", 2);
+	ft_putstr_fd(": ", 2);
+	ft_putstr_fd(msg, 2);
+	ft_putstr_fd("\n", 2);
 }
 
 char	**ft_removepathprefix(char **paths)
