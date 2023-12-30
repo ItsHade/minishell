@@ -6,7 +6,6 @@ SRC = 	07_exec.c \
 		08_exec2.c \
 		00_main.c \
 		utils.c \
-		split.c \
 		02_token.c \
 		09_exec_utils.c \
 		cd_pwd.c \
@@ -26,7 +25,9 @@ SRC = 	07_exec.c \
 		05_parsing.c \
 		06_parsing2.c \
 		03_token_list.c \
-		error.c
+		error.c \
+		set_env.c \
+		tmp_put.c
 
 SRC        := $(SRC:%=$(SRC_DIR)/%)
 OBJ        := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

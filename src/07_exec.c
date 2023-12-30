@@ -1,11 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   07_exec.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maburnet <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/30 12:17:27 by maburnet          #+#    #+#             */
+/*   Updated: 2023/12/30 12:17:31 by maburnet         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-extern int g_return;
+extern int	g_return;
 
-int    ft_exec(char **command, t_envp **envp)
+int	ft_exec(char **command, t_envp **envp)
 {
-	char    *path;
+	char	*path;
 	char	**env;
 
 	if (!command[0])
@@ -18,23 +29,15 @@ int    ft_exec(char **command, t_envp **envp)
 	if (ft_is_absolute(command[0]) == 0)
 		return (ft_exec_abs(command, env));
 	else if (ft_is_absolute(command[0]) == 2)
-		return (ft_error_msg(command[0], PERM, 126), ft_freetab(env), g_return);
+		return (error_msg(command[0], PERM, 126), ft_freetab(env), g_return);
 	path = ft_findcmdpath(command[0], env, NULL, NULL);
 	if (!path && ft_getenv("PATH", *envp) != NULL)
-		return (ft_error_msg(command[0], NOTFOUND, 127), ft_freetab(env), g_return);
+		return (error_msg(command[0], NFOUND, 127), ft_freetab(env), g_return);
 	else if (!path)
-		return (ft_error_msg(command[0], NOFILE, 127), ft_freetab(env), g_return);
+		return (error_msg(command[0], NOFILE, 127), ft_freetab(env), g_return);
 	if (execve(path, command, env) == -1)
 	{
-		fprintf(stderr, "EXECVE returned -1\n");
-		if (errno == EACCES) //pour quels cas ? 
-			ft_error_msg(command[0], NOTFOUND, 127); //changed from 126 to 127 for ""
-		else
-		{
-			fprintf(stderr, "errno is not EACCESS\n");
-			ft_error(NULL, command[0]);
-			g_return = 127;
-		}
+		error_msg(command[0], NFOUND, 127);
 		return (ft_free(path), ft_freetab(env), g_return);
 	}
 	return (0);
@@ -47,16 +50,11 @@ int	ft_do_child(t_data *data, t_envp **envp, int i)
 	if (i != data->nb_cmd - 1)
 	{
 		if (dup2(data->pipefd[1], STDOUT_FILENO) == -1)
-			return (ft_closepipe(data->pipefd),  -1);
+			return (ft_closepipe(data->pipefd), -1);
 	}
 	close(data->pipefd[0]);
 	close(data->pipefd[1]);
 	g_return = ft_io_file(data, envp, i, 1);
-	// if (data->commands[i].is_null[0] == 0)
-	// {
-	// 	g_return = ft_exec(data->commands[i].cmd_arg, envp);
-			
-	// }
 	g_return = ft_exec(data->commands[i].cmd_arg, envp);
 	ft_freecmdtable(data);
 	clear_ep(envp);
@@ -83,7 +81,7 @@ int	ft_do_parent(t_data *data, int i, pid_t pid)
 	return (0);
 }
 
-int ft_do_cmd(t_data *data, t_envp **envp, int i)
+int	ft_do_cmd(t_data *data, t_envp **envp, int i)
 {
 	pid_t	pid;
 
@@ -102,4 +100,3 @@ int ft_do_cmd(t_data *data, t_envp **envp, int i)
 		ft_do_parent(data, i, pid);
 	return (0);
 }
-

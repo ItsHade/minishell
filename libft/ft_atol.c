@@ -12,18 +12,24 @@
 
 #include "libft.h"
 
+void	ft_jump_whitespace(const char *str, int *i)
+{
+	while (str[*i] && (str[*i] == ' ' || str[*i] == '\f'
+			|| str[*i] == '\n' || str[*i] == '\r'
+			|| str[*i] == '\t' || str[*i] == '\v'))
+	(*i)++;
+}
+
 long	ft_atol(const char *str, int *too_big)
 {
-	int		sign;
-	int		i;
-	unsigned long res;
+	int				sign;
+	int				i;
+	unsigned long	res;
 
 	sign = 1;
 	i = 0;
 	res = 0;
-	while (str[i] && (str[i] == ' ' || str[i] == '\f' || str[i] == '\n' || str[i] == '\r'
-			|| str[i] == '\t' || str[i] == '\v'))
-		i++;
+	ft_jump_whitespace(str, &i);
 	if (str[i] && str[i] == '+')
 		i++;
 	else if (str[i] && str[i] == '-')
@@ -33,13 +39,12 @@ long	ft_atol(const char *str, int *too_big)
 	}
 	while (str[i] && str[i] >= '0' && str[i] <= '9')
 	{
-		res = res * 10 + (str[i] - '0');
+		res = res * 10 + (str[i++] - '0');
 		if ((res > LONG_MAX && sign == 1) || res - 1 > LONG_MAX)
 		{
 			*too_big = 1;
 			return (0);
 		}
-		i++;
 	}
 	return (res * sign);
 }

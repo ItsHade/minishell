@@ -1,7 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   09_exec_utils.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maburnet <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/30 11:32:44 by maburnet          #+#    #+#             */
+/*   Updated: 2023/12/30 11:32:47 by maburnet         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-extern int g_return;
+extern int	g_return;
 
 void	ft_close_std(t_data *data)
 {
@@ -9,7 +20,7 @@ void	ft_close_std(t_data *data)
 	close(data->stdout);
 }
 
-void	ft_error_msg(char *file, char *msg, int ret)
+void	error_msg(char *file, char *msg, int ret)
 {
 	g_return = ret;
 	ft_putstr_fd("minishell: ", 2);

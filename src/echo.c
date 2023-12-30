@@ -148,7 +148,7 @@ int	do_dq(t_exp **exp, char *s, int i, t_envp *ep)
 	while (s[i] && s[i] != '\"')
 	{
 		if (s[i] == '$' && s[i + 1] && (is_env(s[i + 1])
-				|| s[i + 1] == '$' || s[i + 1] == '?'))
+				|| s[i + 1] == '?'))
 			i = do_dollar(exp, s, i, ep);
 		else
 			i = do_not_exp_dq(exp, s, i);
@@ -191,12 +191,12 @@ int	do_not_exp(t_exp **exp, char *s, int i)
 }
 
 
-int	do_quote_exp(t_exp **exp, char *s, t_envp *ep)
+int	do_quote_exp(t_exp **exp, char *s, t_envp *ep, int mode)
 {
 	int	i;
 
 	i = 0;
-	if (s[0] == '~')
+	if (s[0] == '~' && mode)
 	{
 		i = do_tilde(exp, s, ep);
 		if (i == -1)

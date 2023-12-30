@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maburnet <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/30 12:29:39 by maburnet          #+#    #+#             */
+/*   Updated: 2023/12/30 12:29:40 by maburnet         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 
 char	**ft_lst_to_tab(t_envp **lst)
@@ -22,7 +34,7 @@ char	**ft_lst_to_tab(t_envp **lst)
 	return (tab);
 }
 
-char *ft_strjoinf(char *s1, char *s2)
+char	*ft_strjoinf(char *s1, char *s2)
 {
 	char	*new;
 	size_t	i;
@@ -49,7 +61,7 @@ char *ft_strjoinf(char *s1, char *s2)
 	return (new);
 }
 
-int is_env(int c)
+int	is_env(int c)
 {
 	if (ft_isalnum(c) || ft_isdigit(c) || c == '_')
 		return (1);
@@ -69,3 +81,49 @@ int	inv_env_name(char *s)
 	}
 	return (0);
 }
+
+int	is_sep(char c)
+{
+	int	i;
+	const char sep[4] = " 	";
+
+	i = 0;
+	while (sep[i])
+	{
+		if (c == sep[i])
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	is_meta(char c)
+{
+	int	i;
+	const char meta[5] = "|<>";
+
+	i = 0;
+	while (meta[i])
+	{
+		if (c == meta[i])
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	is_quote(char c)
+{
+	int	i;
+	const char quote[5] = "'\"";
+
+	i = 0;
+	while (quote[i])
+	{
+		if (c == quote[i])
+			return (1);
+		i++;
+	}
+	return (0);
+}
+

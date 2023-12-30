@@ -12,6 +12,7 @@
 
 #include "libft.h"
 #include <stdio.h>
+
 void	ft_putstr_fd(char *s, int fd)
 {
 	if (!s)
@@ -21,4 +22,3 @@ void	ft_putstr_fd(char *s, int fd)
 		write(fd, s, ft_strlen(s));
 	}
 }
-

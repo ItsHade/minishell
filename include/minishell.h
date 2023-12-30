@@ -30,10 +30,12 @@
 
 # include "../libft/libft.h"
 
-#define NOTFOUND "command not found"
+#define NFOUND "command not found"
 #define NOFILE	"No such file or directory"
 #define ISDIR	"Is a directory"
 #define PERM	"Permission denied"
+#define AMBIGUOUS "ambiguous redirect"
+#define DOLQUESTION "Minishell: unset: `0': not a valid identifier\n"
 
 typedef enum e_label
 {
@@ -70,8 +72,8 @@ typedef struct s_command
 {
 	char    **cmd_arg; // {"ls", "-la", NULL}
 	char    **files; // {"$TEST", "$RIEN", NULL} //2e exp -> si c'est NULL ou VIDE ou PLS MOTS on expand pas (garde $RIEN)
+	int		*is_ambiguous;
 	int     *redir; // {"I_REDIR", "O_REDIR", NULL}
-	//int		*is_null;
 	int     nb_io;
 	int		nb_arg;
 }	t_command;
@@ -98,6 +100,7 @@ typedef struct s_data
 {
 	t_command   *commands;
 	t_envp      *env;
+	char		*line;
 	int         nb_cmd;
 	int         pipefd[2];
 	int         infile;
@@ -124,9 +127,9 @@ int     syntax_error(t_token **tl);
 
 /* LEXER */
 
-int	add_dollar_str(char **line, int i, t_envp *ep);
+int     add_dollar_str(char **line, int i, t_envp *ep);
 
-int	expand_line(char **line, t_envp *ep);
+int     expand_line(char **line, t_envp *ep);
 
 int     ft_get_token(char *value);
 
@@ -134,6 +137,7 @@ int     ft_tokenize(t_token **token_list);
 
 int     ft_lexer(t_token **token_list, char **line, t_data *data);
 
+int     check_amb_str(char *s);
 
 /* PARSING */
 
@@ -144,6 +148,8 @@ int	    ft_get_cmd_info(t_token **next_cmd, int *nb_arg, int *nb_io);
 int     ft_get_args(t_command *command, t_token **token_list);
 
 int	    ft_get_redir(t_command *command, t_token **next_cmd);
+
+int		ft_get_amb(t_command *command);
 
 void	ft_go_to_next_cmd(t_token **next_cmd);
 
@@ -175,21 +181,21 @@ void	ft_lstadd_back_exp(t_exp **lst, t_exp *new);
 
 void	clear_exp(t_exp **exp);
 
-int	add_new_exp(t_exp **exp, char *str);
+int		add_new_exp(t_exp **exp, char *str);
 
-int	add_exp_value(t_exp **exp, char *env_name, t_envp *ep);
+int		add_exp_value(t_exp **exp, char *env_name, t_envp *ep);
 
 int     do_dollar(t_exp **exp, char *s, int i, t_envp *ep);
 
 int     do_dq(t_exp **exp, char *s, int i, t_envp *ep);
 
-int     do_not_exp(t_exp **exp, char *s, int i); //peut static
+int     do_not_exp(t_exp **exp, char *s, int i);
 
-int	do_tilde(t_exp **exp, char *s, t_envp *ep); //peut static
+int		do_tilde(t_exp **exp, char *s, t_envp *ep);
 
-int	do_quote_exp(t_exp **exp, char *s, t_envp *ep);
+int		do_quote_exp(t_exp **exp, char *s, t_envp *ep, int mode);
 
-int     quote_or_dollar(char *s); //peut enlever
+int     quote_or_dollar(char *s);
 
 int     is_option_n(char *s);
 
@@ -267,17 +273,21 @@ void	*ft_calloc(size_t nmemb, size_t size);
 
 void	ft_bzero(void *s, size_t n);
 
-int     ft_is_sep(char c, const char *sep);
+int     ft_next_word_len(char *line, int *i);
 
-int     ft_next_word_len(char *line, int *i, const char *sep, const char *meta);
-
-int     ft_get_token_list(t_token **token_list, char *line, const char *sep, const char *meta);
+int     ft_get_token_list(t_token **tl, char *l);
 
 /* UTILS */
 
 char    *ft_strjoinf(char *s1, char *s2);
 
 int     is_env(int c);
+
+int		is_sep(char c);
+
+int		is_meta(char c);
+
+int		is_quote(char c);
 
 /* EXEC UTILS */
 
@@ -333,13 +343,15 @@ int		ft_unlink_here_doc(t_data *data, int i);
 
 int		ft_is_here_doc(t_data *data, int i, int *nb_doc);
 
-int		ft_check_here_doc(t_data *data);
+int		ft_check_here_doc(t_data *data, int i);
 
 /* EXPANSION */
 
 int		ft_expand_cmd(t_data *data, t_envp **env, int i);
 
 int		ft_expand_files(t_data *data, t_envp **env, int i);
+
+int		is_amb_cmd(char *s, t_envp *ep);
 
 /* FREE */
 
@@ -353,13 +365,24 @@ void	ft_freecmdtable(t_data *data);
  
 /* ERROR */
 
-void	ft_error_msg(char *file, char *msg, int ret);
+void	error_msg(char *file, char *msg, int ret);
 
 void    ft_error(char *s, char *err);
 
 void	ft_fail_alloc(void);
 
 void	ft_close_std(t_data *data);
+
+// TEMP PUT
+
+//
+void	ft_putinttab(int *tab, int nb);
+
+void	ft_putlst(t_token **token_list);
+
+void	ft_puttab(char **tab);
+
+void	ft_putcmdtable(t_data *data);
 
 #endif
 

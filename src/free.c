@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maburnet <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/30 12:44:05 by maburnet          #+#    #+#             */
+/*   Updated: 2023/12/30 12:44:07 by maburnet         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 
 void	ft_free(void *to_free)
@@ -37,12 +49,12 @@ void	ft_freecmdtable(t_data *data)
 	int	i;
 
 	i = 0;
-	while(i < data->nb_cmd)
+	while (i < data->nb_cmd)
 	{
 		ft_freetab(data->commands[i].cmd_arg);
 		ft_freetab(data->commands[i].files);
+		ft_free(data->commands[i].is_ambiguous);
 		ft_free(data->commands[i].redir);
-		//ft_free(data->commands[i].is_null);
 		i++;
 	}
 	free(data->commands);

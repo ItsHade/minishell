@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maburnet <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/30 12:44:37 by maburnet          #+#    #+#             */
+/*   Updated: 2023/12/30 12:44:46 by maburnet         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
-extern int g_return;
-//idk if should go here
+
+extern int	g_return;
 
 t_envp	*ft_lstlast_ev(t_envp *lst)
 {
@@ -63,12 +75,12 @@ int	do_exports(t_command *cmd, t_envp **ep)
 	char	**ags;
 	int	ret;
 
-	i = 1;
+	i = 0;
 	ret = 0;
 	g_return = 0;
 	if (cmd->cmd_arg[1] == NULL)
 		return (print_export(*ep), 0);
-	while (cmd->cmd_arg[i] != NULL)
+	while (cmd->cmd_arg[++i] != NULL)
 	{
 		ags = NULL;
 		ags = split_env(cmd->cmd_arg[i]);
@@ -81,7 +93,6 @@ int	do_exports(t_command *cmd, t_envp **ep)
 		}
 		else
 			ret = g_return;
-		i++;
 	}
 	if (g_return != 0)
 		ret = g_return;

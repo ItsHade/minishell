@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   05_parsing.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maburnet <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/30 12:16:20 by maburnet          #+#    #+#             */
+/*   Updated: 2023/12/30 12:16:22 by maburnet         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../include/minishell.h"
 
@@ -29,8 +40,8 @@ void	ft_go_to_next_cmd(t_token **next_cmd)
 
 int	ft_fill_cmd_table(t_token **token_list, t_data *data)
 {
-	int	i;
-	t_token *next_cmd;
+	int		i;
+	t_token	*next_cmd;
 
 	i = 0;
 	next_cmd = *token_list;
@@ -40,10 +51,13 @@ int	ft_fill_cmd_table(t_token **token_list, t_data *data)
 		return (perror("ft_calloc"), ft_fail_alloc(), -1);
 	while (i < data->nb_cmd)
 	{
-		ft_get_cmd_info(&next_cmd, &data->commands[i].nb_arg, &data->commands[i].nb_io);
+		ft_get_cmd_info(&next_cmd, &data->commands[i].nb_arg,
+			&data->commands[i].nb_io);
 		if (ft_get_redir(&data->commands[i], &next_cmd) == -1)
 			return (-1);
 		if (ft_get_args(&data->commands[i], &next_cmd) == -1)
+			return (-1);
+		if (ft_get_amb(&data->commands[i]) == -1)
 			return (-1);
 		if (next_cmd != NULL)
 			ft_go_to_next_cmd(&next_cmd);
@@ -52,47 +66,48 @@ int	ft_fill_cmd_table(t_token **token_list, t_data *data)
 	return (0);
 }
 
-void	ft_check_tokens(t_token *current, int *cmd)
+void	ft_check_tokens(t_token *cur, int *cmd)
 {
-	if (current->label == HEREDOC && current->next)
-		current->next->label = LIMITER;
-	if ((current->label == I_RDR || current->label == O_RDR || current->label == OAPPEND) && current->next)
-		current->next->label = IO_FILE;
-	if (current->label == PIPE && current->next && current->next->label == WORD)
-		current->next->label = CMD;
-	if (current->label == WORD && current->index == 0)
+	if (cur->label == HEREDOC && cur->next)
+		cur->next->label = LIMITER;
+	if ((cur->label == I_RDR || cur->label == O_RDR || cur->label == OAPPEND)
+		&& cur->next)
+		cur->next->label = IO_FILE;
+	if (cur->label == PIPE && cur->next && cur->next->label == WORD)
+		cur->next->label = CMD;
+	if (cur->label == WORD && cur->index == 0)
 	{
-		current->label = CMD;
+		cur->label = CMD;
 		*cmd = 1;
 	}
-	if (current->label == CMD && current->next && current->next->label == WORD)
-		current->next->label = ARG;
-	if (current->label == ARG && current->next && current->next->label == WORD)
-		current->next->label = ARG;
-	if (current->label == IO_FILE && current->next && current->next->label == WORD)
-		current->next->label = ARG;
-	if ((current->label == WORD || current->label == ARG) && cmd == 0)
+	if (cur->label == CMD && cur->next && cur->next->label == WORD)
+		cur->next->label = ARG;
+	if (cur->label == ARG && cur->next && cur->next->label == WORD)
+		cur->next->label = ARG;
+	if (cur->label == IO_FILE && cur->next && cur->next->label == WORD)
+		cur->next->label = ARG;
+	if ((cur->label == WORD || cur->label == ARG) && cmd == 0)
 	{
-		current->label = CMD;
+		cur->label = CMD;
 		*cmd = 1;
 	}
-	if (current->label == PIPE)
+	if (cur->label == PIPE)
 		*cmd = 0;
 }
 
 int	ft_parsing(t_token **token_list, t_data *data)
 {
-	t_token	*current;
+	t_token	*cur;
 	int		cmd;
 
-	current = *token_list;
+	cur = *token_list;
 	cmd = 0;
-	while (current)
+	while (cur)
 	{
-		if (current->index == 0 && current->label == PIPE)
+		if (cur->index == 0 && cur->label == PIPE)
 			return (-1);
-		ft_check_tokens(current, &cmd);
-		current = current->next;
+		ft_check_tokens(cur, &cmd);
+		cur = cur->next;
 	}
 	if (ft_fill_cmd_table(token_list, data) == -1)
 		return (-1);

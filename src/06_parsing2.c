@@ -47,10 +47,21 @@ int	ft_get_args2(t_command *command, t_token *current, int a)
 	return (0);
 }
 
-int ft_get_args(t_command *command, t_token **token_list)
+int	ft_get_amb(t_command *command)
 {
-	t_token *current;
-	int	    a;
+	int	a;
+
+	a = 0;
+	command->is_ambiguous = ft_calloc(sizeof(int), command->nb_io);
+	if (!command->is_ambiguous)
+		return (perror("ft_calloc in ft_get_amb"), -1);
+	return (0);
+}
+
+int	ft_get_args(t_command *command, t_token **token_list)
+{
+	t_token	*current;
+	int		a;
 
 	a = 0;
 	command->cmd_arg = NULL;
@@ -59,7 +70,7 @@ int ft_get_args(t_command *command, t_token **token_list)
 	{
 		command->cmd_arg = ft_calloc(sizeof(char *), 1);
 		if (!command->cmd_arg)
-			return (perror("ft_calloc"), ft_fail_alloc(),-1);
+			return (perror("ft_calloc"), ft_fail_alloc(), -1);
 		command->cmd_arg[0] = NULL;
 		return (0);
 	}
@@ -90,7 +101,7 @@ int	ft_get_redir2(t_command *command, t_token *current, int a)
 int	ft_get_redir(t_command *command, t_token **next_cmd)
 {
 	int		a;
-	t_token *current;
+	t_token	*current;
 
 	current = *next_cmd;
 	a = 0;

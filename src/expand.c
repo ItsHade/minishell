@@ -13,9 +13,9 @@ int	ft_expand_cmd(t_data *data, t_envp **env, int i) //echo \n  OU  << outfile
 	if (data->commands[i].cmd_arg == NULL)
 		return (0);
 	//data->commands[i].is_null = ft_calloc(sizeof(int), (data->commands[i].nb_arg + 1));
-	while (data->commands[i].cmd_arg[a] != NULL)  //"l$LS" $no ""
+	while (data->commands[i].cmd_arg[a] != NULL)
 	{
-		if (do_quote_exp(&exp, data->commands[i].cmd_arg[a], *env) == -1)
+		if (do_quote_exp(&exp, data->commands[i].cmd_arg[a], *env, 1) == -1)
 			return (-1); //""   ''    $NO
 		// if (!exp)
 		// {
@@ -36,11 +36,32 @@ int	ft_expand_cmd(t_data *data, t_envp **env, int i) //echo \n  OU  << outfile
 	return (0);
 }
 
+int	is_amb_cmd(char *t, t_envp *ep)
+{
+	int	dl;
+	int	ret;
+
+	dl = 0;
+	while (t[dl] && t[dl] != '$')
+		dl++;
+	if (t[dl] != '$')
+	{
+		ft_free(t);
+		return (0);
+	}
+	if (add_dollar_str(&t, dl, ep) == -1)
+		return (-1);
+	ret = check_amb_str(t);
+	ft_free(t);
+	return (ret);
+}
+
 
 int	ft_expand_files(t_data *data, t_envp **env, int i)
 {
 	t_exp *exp;
 	int	a;
+	int	is_amb;
 
 	a = 0;
 	exp = NULL;
@@ -48,7 +69,17 @@ int	ft_expand_files(t_data *data, t_envp **env, int i)
 		return (0);
 	while (data->commands[i].files[a] != NULL)
 	{
-		if (do_quote_exp(&exp, data->commands[i].files[a], *env) == -1)
+		//si ambigue
+		is_amb = is_amb_cmd(ft_strdup(data->commands[i].files[a]), *env);
+		//printf("%s++++%d\n", data->commands[i].files[a], is_amb);
+		if (is_amb == -1)
+			return (-1);
+		else if (is_amb == 1)
+		{
+			a++;
+			continue;
+		}
+		if (do_quote_exp(&exp, data->commands[i].files[a], *env, 1) == -1)
 			return (-1);
 		free(data->commands[i].files[a]);
 		if (!exp)
@@ -63,3 +94,13 @@ int	ft_expand_files(t_data *data, t_envp **env, int i)
 	}
 	return (0);
 }
+
+//ok$RIEN
+
+// ls > $RIEN
+// ls > '$RIEN'
+// data->commands[i]->is_ambiguous;
+
+// $RIEN --> nom du fichier a creer
+
+// $RIEN --> ambiguous __REDIRECT

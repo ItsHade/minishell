@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   11_here_doc.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maburnet <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/30 11:35:56 by maburnet          #+#    #+#             */
+/*   Updated: 2023/12/30 11:35:58 by maburnet         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 
-extern int g_return;
+extern int	g_return;
 
 // pipefd[0] read
 // pipefd[1] write
@@ -81,7 +93,7 @@ int	ft_here_doc(char *limiter, int i)
 	return (0);
 }
 
-int ft_is_here_doc(t_data *data, int i, int *nb_doc)
+int	ft_is_here_doc(t_data *data, int i, int *nb_doc)
 {
 	int	a;
 
@@ -96,15 +108,13 @@ int ft_is_here_doc(t_data *data, int i, int *nb_doc)
 	return (*nb_doc);
 }
 
-int ft_check_here_doc(t_data *data)
+int	ft_check_here_doc(t_data *data, int i)
 {
-	int	nb_doc;
-	int	a;
-	int j;
-	int i;
-	char *limiter;
+	int		nb_doc;
+	int		a;
+	int		j;
+	char	*limiter;
 
-	i = -1;
 	while (++i < data->nb_cmd)
 	{
 		a = 0;

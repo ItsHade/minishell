@@ -1,23 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   08_exec2.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maburnet <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/30 12:18:29 by maburnet          #+#    #+#             */
+/*   Updated: 2023/12/30 12:18:35 by maburnet         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-extern int g_return;
+extern int	g_return;
 
 int	ft_exec_abs(char **command, char **envp)
 {
-	//
-	printf("IS ABS\n");
 	if (execve(command[0], command, envp) == -1)
 	{
-		// if (command[0][0] == '/') //doesn't include all directories
 		if (access(command[0], F_OK | X_OK) == 0)
 		{
-			printf("ACCESSABLE\n");
-			ft_error_msg(command[0], ISDIR, 126);
+			error_msg(command[0], ISDIR, 126);
 			ft_freetab(envp);
 			return (g_return);
 		}
-		ft_error_msg(command[0], NOTFOUND, 127);
+		error_msg(command[0], NFOUND, 127);
 		ft_freetab(envp);
 		return (g_return);
 	}
@@ -26,12 +33,12 @@ int	ft_exec_abs(char **command, char **envp)
 
 int	ft_is_absolute(char *cmd)
 {
-	struct stat fileStat;
+	struct stat	filestat;
 
-    if (stat(cmd, &fileStat) == 0)
+	if (stat(cmd, &filestat) == 0)
 	{
-		if (fileStat.st_mode & S_IFDIR)
-			return (0);
+		if (filestat.st_mode & S_IFDIR)
+			return (1);
 	}
 	if (access(cmd, F_OK | X_OK) == 0)
 		return (0);
@@ -82,7 +89,7 @@ int	ft_exec_cmd(t_data *data, t_envp **envp, int i)
 		}
 		else
 		{
-			if (ft_do_cmd(data,  envp, i) == -1)
+			if (ft_do_cmd(data, envp, i) == -1)
 				return (-1);
 		}
 		i++;
@@ -103,7 +110,7 @@ int	ft_execute(t_data *data, t_envp **envp)
 	data->pid = -1;
 	data->stdin = dup(STDIN_FILENO);
 	data->stdout = dup(STDOUT_FILENO);
-	if (ft_check_here_doc(data) == -1)
+	if (ft_check_here_doc(data, -1) == -1)
 		return (ft_close_std(data), -1);
 	if (ft_exec_cmd(data, envp, i) == -1)
 		return (ft_close_std(data), -1);
@@ -111,6 +118,6 @@ int	ft_execute(t_data *data, t_envp **envp)
 		return (perror("dup2"), ft_close_std(data), -1);
 	if (dup2(data->stdout, STDOUT_FILENO) == -1)
 		return (perror("dup2"), ft_close_std(data), -1);
-    ft_close_std(data);
+	ft_close_std(data);
 	return (0);
 }
