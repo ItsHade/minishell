@@ -6,7 +6,7 @@
 /*   By: maburnet <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 10:52:29 by maburnet          #+#    #+#             */
-/*   Updated: 2023/12/22 10:52:33 by maburnet         ###   ########.fr       */
+/*   Updated: 2023/12/30 20:00:50 by maburnet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@
 
 # include "../libft/libft.h"
 
-#define NFOUND "command not found"
-#define NOFILE	"No such file or directory"
-#define ISDIR	"Is a directory"
-#define PERM	"Permission denied"
-#define AMBIGUOUS "ambiguous redirect"
-#define DOLQUESTION "Minishell: unset: `0': not a valid identifier\n"
+# define NFOUND "command not found"
+# define NOFILE	"No such file or directory"
+# define ISDIR	"Is a directory"
+# define PERM	"Permission denied"
+# define AMBIGUOUS "ambiguous redirect"
+# define DOLQUESTION "Minishell: unset: `0': not a valid identifier\n"
 
 typedef enum e_label
 {
@@ -54,110 +54,87 @@ typedef enum e_label
 	LIMITER = 12,
 	SYNTAX = 13,
 	NL = 14
-}   t_label;
+}	t_label;
 
 typedef struct s_token_list
 {
-	char                *value;
-	t_label             label;
-	int                 index;
-	struct s_token_list *next;
-	struct s_token_list *prev;
-}   t_token;
+	char					*value;
+	t_label					label;
+	int						index;
+	struct s_token_list		*next;
+	struct s_token_list		*prev;
+}	t_token;
 
-//Avant expand avant exec
-//TEST=infile
-//<$TEST ls -la >$RIEN
 typedef struct s_command
 {
-	char    **cmd_arg; // {"ls", "-la", NULL}
-	char    **files; // {"$TEST", "$RIEN", NULL} //2e exp -> si c'est NULL ou VIDE ou PLS MOTS on expand pas (garde $RIEN)
+	char	**cmd_arg;
+	char	**files;
 	int		*is_ambiguous;
-	int     *redir; // {"I_REDIR", "O_REDIR", NULL}
-	int     nb_io;
+	int		*redir;
+	int		nb_io;
 	int		nb_arg;
 }	t_command;
 
 typedef struct s_envp
 {
-	char            **content;
-	struct s_envp   *next;
-}   t_envp;
+	char			**content;
+	struct s_envp	*next;
+}	t_envp;
 
 typedef struct s_exp
 {
-	char            *s;
-	struct s_exp    *next;
-}   t_exp;
+	char			*s;
+	struct s_exp	*next;
+}	t_exp;
 
 typedef struct s_clean
 {
-	char            *line;
-	t_token    *token_list;
-}   t_clean;
+	char		*line;
+	t_token		*token_list;
+}	t_clean;
 
 typedef struct s_data
 {
-	t_command   *commands;
-	t_envp      *env;
+	t_command	*commands;
+	t_envp		*env;
 	char		*line;
-	int         nb_cmd;
-	int         pipefd[2];
-	int         infile;
-	int         outfile;
-	int         stdin;
-	int         stdout;
-	int         pid;
-	int         status;
+	int			nb_cmd;
+	int			pipefd[2];
+	int			infile;
+	int			outfile;
+	int			stdin;
+	int			stdout;
+	int			pid;
+	int			status;
 }	t_data;
 
-//not needed
-void	ft_putlst(t_token **token_list);
+/* 00_MAIN */
 
-void    ft_puttab(char **tab);
+char	*ft_get_line(t_data *data, char *line);
 
-void	ft_putcmdtable(t_data *cmd_table);
-//
+int		minishell(t_data *data);
 
-/* SYNTAX */
+/* 01 LEXER */
 
-int     quote_error(char *s);
+int		ft_get_token(char *value);
 
-int     syntax_error(t_token **tl);
+int		ft_tokenize(t_token **token_list);
 
-/* LEXER */
+int		ft_lexer(t_token **token_list, char **line, t_data *data);
 
-int     add_dollar_str(char **line, int i, t_envp *ep);
+/* 02 TOKEN */
 
-int     expand_line(char **line, t_envp *ep);
+int		ft_count_words(char *line);
 
-int     ft_get_token(char *value);
+int		ft_stacked_word(char *line, int *i);
 
-int     ft_tokenize(t_token **token_list);
+int		ft_next_word_len(char *line, int *i);
 
-int     ft_lexer(t_token **token_list, char **line, t_data *data);
+char	*ft_get_next_word(char *line, int *i);
 
-int     check_amb_str(char *s);
+int		ft_get_token_list(t_token **tl, char *l);
 
-/* PARSING */
-
-int	    ft_nb_of_cmd(t_token **token_list);
-
-int	    ft_get_cmd_info(t_token **next_cmd, int *nb_arg, int *nb_io);
-
-int     ft_get_args(t_command *command, t_token **token_list);
-
-int	    ft_get_redir(t_command *command, t_token **next_cmd);
-
-int		ft_get_amb(t_command *command);
-
-void	ft_go_to_next_cmd(t_token **next_cmd);
-
-int     ft_fill_cmd_table(t_token **token_list, t_data *data);
-
-int	    ft_parsing(t_token **token_list, t_data *data);
-
-/* TOKEN LIST */
+/* 03 TOKEN LIST */
 
 t_token	*ft_lstnew(void *value);
 
@@ -169,119 +146,125 @@ void	ft_lstclear(t_token **lst);
 
 size_t	ft_lstsize(t_envp **lst);
 
-/* ECHO */
+/* 04 SYNTAX */
 
-void	print_exp(t_exp *exp);
+void	quote_error_loop(char *s, int *dq, int *sq, int *i);
 
-t_exp	*ft_lstlast_exp(t_exp *lst);
+int		quote_error(char *s);
 
-char	*exp_to_str(t_exp *exp);
+int		check_syntax_error(t_token **tl, t_token *cur);
 
-void	ft_lstadd_back_exp(t_exp **lst, t_exp *new);
+int		syntax_error(t_token **tl);
 
-void	clear_exp(t_exp **exp);
+/* 05 PARSING */
 
-int		add_new_exp(t_exp **exp, char *str);
+int		ft_nb_of_cmd(t_token **token_list);
 
-int		add_exp_value(t_exp **exp, char *env_name, t_envp *ep);
+void	ft_go_to_next_cmd(t_token **next_cmd);
 
-int     do_dollar(t_exp **exp, char *s, int i, t_envp *ep);
+int		ft_fill_cmd_table(t_token **token_list, t_data *data);
 
-int     do_dq(t_exp **exp, char *s, int i, t_envp *ep);
+void	ft_check_tokens(t_token *cur, int *cmd);
 
-int     do_not_exp(t_exp **exp, char *s, int i);
+int		ft_parsing(t_token **token_list, t_data *data);
 
-int		do_tilde(t_exp **exp, char *s, t_envp *ep);
+/* 06 PARSING UTILS */
 
-int		do_quote_exp(t_exp **exp, char *s, t_envp *ep, int mode);
+int		ft_get_cmd_info(t_token **next_cmd, int *nb_arg, int *nb_io);
 
-int     quote_or_dollar(char *s);
+int		ft_get_args2(t_command *command, t_token *current, int a);
 
-int     is_option_n(char *s);
+int		ft_get_args(t_command *command, t_token **token_list);
 
-int     do_echo(t_command *cmd);
+int		ft_get_redir2(t_command *command, t_token *current, int a);
 
-/* ENV */
+int		ft_get_redir(t_command *command, t_token **next_cmd);
 
-void	free_content(char **content);
+/* 07 EXEC */
 
-int     is_env(int c);
+int		ft_exec(char **command, t_envp **envp);
 
-int     inv_env_name(char *s);
+int		ft_do_child(t_data *data, t_envp **envp, int i);
 
-int     print_envp(t_envp *envp);
+int		ft_do_parent(t_data *data, int i, pid_t pid);
 
-int	add_new_envp(t_envp **ep, char **content);
+int		ft_do_cmd(t_data *data, t_envp **envp, int i);
 
-int     ft_get_shell_level(t_envp **ep);
+/* 08 EXEC 2 */
 
-int	set_env(t_envp **ep, char **envp);
+int		ft_exec_abs(char **command, char **envp);
 
-void    clear_ep(t_envp **ep);
+int		ft_is_absolute(char *cmd);
 
-char	**split_env(char *s);
+int		ft_get_return_value(t_data *data);
 
-/* EXPORT */
+int		ft_exec_cmd(t_data *data, t_envp **envp, int i);
 
-int	build_new_envp(char *name, char *value, t_envp **ep);
+int		ft_execute(t_data *data, t_envp **envp);
 
-int	export_error(char *name, char *value, char *cmd);
+/* 09 EXEC UTILS */
 
-t_envp	*ft_lstlast_ev(t_envp *lst);
+void	ft_close_std(t_data *data);
 
-void	ft_lstadd_back_ev(t_envp **lst, t_envp *new);
+void	error_msg(char *file, char *msg, int ret);
 
-void	ft_free(void *to_free);
+char	**ft_removepathprefix(char **paths);
 
-char	*ft_getenv(char *env_name, t_envp *ep);
+char	**ft_getpaths(char **envp);
 
-char	**add_content(char *name, char *value);
+char	*ft_findcmdpath(char *cmd, char **envp, char *tmp, char *cmd_path);
 
-int	do_export(char *name, char *value, t_envp **ep, char *cmd);
+/* 10 BUILTINS */
 
-int     do_exports(t_command *cmd, t_envp **ep);
+int		ft_do_builtin(t_data *data, t_envp **envp, int i, int is_pipe);
 
-/* UNSET */
+int		ft_is_builtin(t_data *data, int i);
 
-void    ft_free_ep(t_envp *ep);
+int		ft_builtin_child(t_data *data, t_envp **envp, int i);
 
-int     do_unset(char *arg, t_envp **ep);
+int		ft_exec_builtin_pipe(t_data *data, t_envp **envp, int i);
 
-int     do_unsets(t_command *cmd, t_envp **ep);
+int		ft_exec_builtin(t_data *data, t_envp **envp, int i);
 
-/* CD and PWD */
+/* 11 HERE DOC */
 
-char	*get_prefix_path(char *path, char *cwd);
+int		ft_unlink_here_doc(t_data *data, int i);
 
-char    *join_prefix_path(char *path, char *cwd);
+int		ft_here_doc2(char *limiter, int fd);
 
-char	*get_ab_path(char *path);
+int		ft_here_doc(char *limiter, int i);
 
-int     do_cd(char *path, t_envp **ep);
+int		ft_is_here_doc(t_data *data, int i, int *nb_doc);
 
-int	do_pwd(t_envp *ep);
+int		ft_check_here_doc(t_data *data, int i);
 
-int     exec_cd(t_command *cmd, t_envp **ep);
+/* 12 REDIRECTION */
 
-/* EXIT */
+int		ft_closepipe(int *pipefd);
 
-int     do_exit(t_data *data, t_envp **ep, int i, int is_pipe);
+int		ft_open_here_doc(t_data *data, int i);
 
-/* FT_SPLIT */
+int		ft_open_here_doc(t_data *data, int i);
 
-void	*ft_calloc(size_t nmemb, size_t size);
+int		ft_open_file(t_data *data, char *file, int mode, int i);
 
-void	ft_bzero(void *s, size_t n);
+int		ft_io_file(t_data *data, t_envp **envp, int i, int is_pipe);
 
-int     ft_next_word_len(char *line, int *i);
+/* 13 SIGNAL */
 
-int     ft_get_token_list(t_token **tl, char *l);
+void	ft_child_signal(int signum);
 
-/* UTILS */
+void	ft_here_doc_signal(int signum);
 
-char    *ft_strjoinf(char *s1, char *s2);
+void	ft_signal(int signum);
 
-int     is_env(int c);
+/* 14  TOKENIZATION */
+
+int		ft_quote_word_len(char *line, int *i, char *quote, int *in_quotes);
+
+int		ft_get_amb(t_command *command);
+
+/* 15 PARSING UTILS */
 
 int		is_sep(char c);
 
@@ -289,71 +272,15 @@ int		is_meta(char c);
 
 int		is_quote(char c);
 
-/* EXEC UTILS */
+/* 16 ERROR */
 
-int     ft_is_absolute(char *cmd);
+void	ft_exit(t_data *data, char *line, int nb);
 
-char	*ft_findcmdpath(char *cmd, char **envp, char *tmp, char *cmd_path);
+void	ft_error(char *s, char *err);
 
-/* BUILTIN */
+void	ft_fail_alloc(void);
 
-int		ft_has_pipe(t_data *data);
-
-int     ft_do_builtin(t_data *data, t_envp **envp, int i, int is_pipe);
-
-int		ft_is_builtin(t_data *data,  int i);
-
-int		ft_exec_builtin_pipe(t_data *data, t_envp **envp, int i);
-
-int		ft_exec_builtin(t_data *data, t_envp **envp, int i);
-
-/* EXECUTION */
-
-char    **ft_lst_to_tab(t_envp **lst);
-
-int		ft_exec_abs(char **command, char **envp);
-
-int		ft_exec(char **command, t_envp **envp);
-
-int		ft_do_cmd(t_data *data, t_envp **envp, int i);
-
-int		ft_execute(t_data *cmd_table, t_envp **envp);
-
-/*  SIGNAL */
-
-void	ft_signal(int signum);
-
-void	ft_child_signal(int signum);
-
-void	ft_here_doc_signal(int signum);
-
-/* REDIRECTION */
-
-int		ft_closepipe(int *pipefd);
-
-int		ft_open_here_doc(t_data *data, int i);
-
-int		ft_open_file(t_data *data, char *file, int mode, int i);
-
-int     ft_io_file(t_data *data, t_envp **envp, int i, int is_pipe);
-
-/* HEREDOC */
-
-int		ft_unlink_here_doc(t_data *data, int i);
-
-int		ft_is_here_doc(t_data *data, int i, int *nb_doc);
-
-int		ft_check_here_doc(t_data *data, int i);
-
-/* EXPANSION */
-
-int		ft_expand_cmd(t_data *data, t_envp **env, int i);
-
-int		ft_expand_files(t_data *data, t_envp **env, int i);
-
-int		is_amb_cmd(char *s, t_envp *ep);
-
-/* FREE */
+/* 17 FREE */
 
 void	ft_free(void *to_free);
 
@@ -362,27 +289,165 @@ void	ft_freetab(char **tab);
 void	ft_freemalloc(char **strs, int a);
 
 void	ft_freecmdtable(t_data *data);
- 
-/* ERROR */
 
-void	error_msg(char *file, char *msg, int ret);
+/* 18 UNSET */
 
-void    ft_error(char *s, char *err);
+void	ft_free_ep(t_envp *ep);
 
-void	ft_fail_alloc(void);
+int		do_unsets(t_command *cmd, t_envp **ep);
 
-void	ft_close_std(t_data *data);
+int		ft_do_unset(char *arg, t_envp *t, t_envp *t2);
 
-// TEMP PUT
+int		do_unset(char *arg, t_envp **ep);
 
-//
-void	ft_putinttab(int *tab, int nb);
+/* 19 CD */
 
-void	ft_putlst(t_token **token_list);
+char	*get_ab_path(char *path);
 
-void	ft_puttab(char **tab);
+int		ft_get_path(char *path, t_envp **ep, char **t, int *f);
 
-void	ft_putcmdtable(t_data *data);
+int		ft_open_dir(DIR **dirp, char *t, char *path);
+
+int		do_cd(char *path, t_envp **ep);
+
+int		exec_cd(t_command *cmd, t_envp **ep);
+
+/* 20 PWD */
+
+int		do_pwd(t_envp *ep);
+
+/* 21 ENV */
+
+int		print_envp(t_envp *envp);
+
+void	free_content(char **content);
+
+char	**split_env(char *s);
+
+int		add_new_envp(t_envp **ep, char **content);
+
+void	clear_ep(t_envp **ep);
+
+/* 22 SET ENV */
+
+int		ft_get_shell_level(t_envp **ep);
+
+int		set_empty_env(t_envp **ep);
+
+int		set_env(t_envp **ep, char **envp);
+
+/* 23 EXPORT */
+
+int		do_exports(t_command *cmd, t_envp **ep, int i);
+
+int		do_export(char *name, char *value, t_envp **ep, char *cmd);
+
+int		export_error(char *name, char *value, char *cmd);
+
+int		build_new_envp(char *name, char *value, t_envp **ep);
+
+char	**add_content(char *name, char *value);
+
+/* 24 EXPORT UTILS */
+
+t_envp	*ft_lstlast_ev(t_envp *lst);
+
+void	ft_lstadd_back_ev(t_envp **lst, t_envp *new);
+
+char	*ft_getenv(char *env_name, t_envp *ep);
+
+void	print_export(t_envp *ep);
+
+/* 25 EXIT */
+
+int		ft_str_is_num(char *s);
+
+int		ft_do_exit(t_data *data, int i, long *res, int too_big);
+
+int		do_exit(t_data *data, t_envp **ep, int i, int is_pipe);
+
+/* 26 EXPAND */
+
+int		ft_expand_cmd(t_data *data, t_envp **env, int i);
+
+int		is_amb_cmd(char *t, t_envp *ep);
+
+int		ft_not_amb(t_command *cmd, t_envp **env, int a, t_exp *exp);
+
+int		ft_expand_files(t_data *data, t_envp **env, int i);
+
+/* 27 EXPAND 2*/
+
+int		do_dollar(t_exp **exp, char *s, int i, t_envp *ep);
+
+int		do_sq(t_exp **exp, char *s, int i);
+
+int		do_not_exp(t_exp **exp, char *s, int i);
+
+int		do_tilde(t_exp **exp, char *s, t_envp *ep);
+
+int		do_quote_exp(t_exp **exp, char *s, t_envp *ep, int mode);
+
+/* 28 EXPAND UTILS */
+
+int		do_not_exp_dq(t_exp **exp, char *s, int i);
+
+int		do_dq(t_exp **exp, char *s, int i, t_envp *ep);
+
+char	*exp_to_str(t_exp *exp);
+
+/* 29 EXP UTILS */
+
+t_exp	*ft_lstlast_exp(t_exp *lst);
+
+void	ft_lstadd_back_exp(t_exp **lst, t_exp *new);
+
+void	clear_exp(t_exp **exp);
+
+int		add_new_exp(t_exp **exp, char *str);
+
+void	print_exp(t_exp *exp);
+
+/* 30 EXPAND LINE */
+
+char	*get_env_value(char *s, int dollar, t_envp *ep);
+
+int		is_ambiguous(char *s, int dl, t_envp *ep);
+
+int		add_dollar_str(char **line, int i, t_envp *ep);
+
+int		do_dollar_line(char **line, int i, t_envp *ep);
+
+int		expand_line(char **line, t_envp *ep);
+
+/* 31 EXPAND LINE UTILS */
+
+int		isset(char const *set, char c);
+
+int		is_printable(char c);
+
+int		is_redir(char *s, int i);
+
+int		further_check_amb_str(char *s, int i);
+
+int		check_amb_str(char *s);
+
+/* 32 ECHO */
+
+int		is_option_n(char *s);
+
+int		do_echo(t_command *cmd);
+
+int		add_exp_value(t_exp **exp, char *env_name, t_envp *ep);
+
+/* 34 UTILS */
+
+char	**ft_lst_to_tab(t_envp **lst);
+
+char	*ft_strjoinf(char *s1, char *s2);
+
+int		is_env(int c);
+
+int		inv_env_name(char *s);
 
 #endif
-

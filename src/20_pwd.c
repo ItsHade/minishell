@@ -1,27 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: maburnet <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/30 13:11:25 by maburnet          #+#    #+#             */
-/*   Updated: 2023/12/30 13:12:43 by maburnet         ###   ########.fr       */
+/*   Created: 2023/12/30 18:46:45 by maburnet          #+#    #+#             */
+/*   Updated: 2023/12/30 18:46:47 by maburnet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-extern int	g_return;
-
-void	ft_error(char *s, char *err)
+int	do_pwd(t_envp *ep)
 {
-	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(s, 2);
-	perror(err);
-}
+	char	*cwd;
 
-void	ft_fail_alloc(void)
-{
-	g_return = -1;
+	cwd = NULL;
+	cwd = getcwd(cwd, 0);
+	if (!cwd)
+	{
+		cwd = ft_strdup(ft_getenv("PWD", ep));
+		if (!cwd)
+			return (-1);
+	}
+	printf("%s\n", cwd);
+	free(cwd);
+	return (0);
 }

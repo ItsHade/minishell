@@ -23,7 +23,7 @@ int	ft_do_builtin(t_data *data, t_envp **envp, int i, int is_pipe)
 	else if (ft_strcmp(data->commands[i].cmd_arg[0], "pwd") == 0)
 		return (do_pwd(*envp));
 	else if (ft_strcmp(data->commands[i].cmd_arg[0], "export") == 0)
-		return (do_exports(&data->commands[i], envp));
+		return (do_exports(&data->commands[i], envp, 0));
 	else if (ft_strcmp(data->commands[i].cmd_arg[0], "unset") == 0)
 		return (do_unsets(&data->commands[i], envp));
 	else if (ft_strcmp(data->commands[i].cmd_arg[0], "env") == 0)

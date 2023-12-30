@@ -2,32 +2,40 @@ SRC_DIR := src
 LIBFT_DIR := libft
 OBJ_DIR := obj
 
-SRC = 	07_exec.c \
-		08_exec2.c \
-		00_main.c \
-		utils.c \
-		02_token.c \
-		09_exec_utils.c \
-		cd_pwd.c \
-		export.c \
-		unset.c \
-		env.c \
-		echo.c \
-		11_here_doc.c \
-		expand.c \
-		12_redirection.c \
-		10_builtins.c \
-		signal.c \
-		exit.c \
+SRC = 	00_main.c \
 		01_lexer.c \
-		04_syntax.c \
-		free.c \
-		05_parsing.c \
-		06_parsing2.c \
+		02_token.c \
 		03_token_list.c \
-		error.c \
-		set_env.c \
-		tmp_put.c
+		04_syntax.c \
+		05_parsing.c \
+		06_parsing_utils.c \
+		07_exec.c \
+		08_exec2.c \
+		09_exec_utils.c \
+		10_builtins.c \
+		11_here_doc.c \
+		12_redirection.c \
+		13_signal.c \
+		14_tokenization.c \
+		15_parsing_utils.c \
+		16_error.c \
+		17_free.c \
+		18_unset.c \
+		19_cd.c \
+		20_pwd.c \
+		21_env.c \
+		22_set_env.c \
+		23_export.c \
+		24_export_utils.c \
+		25_exit.c \
+		26_expand.c \
+		27_expand2.c \
+		28_expand_utils.c \
+		29_exp_utils.c \
+		30_expand_line.c \
+		31_expand_line_utils.c \
+		32_echo.c \
+		33_utils.c
 
 SRC        := $(SRC:%=$(SRC_DIR)/%)
 OBJ        := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

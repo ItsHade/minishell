@@ -29,8 +29,8 @@ int	ft_count_words(char *line)
 
 int	ft_stacked_word(char *line, int *i)
 {
-	int stacked;
-	int len;
+	int	stacked;
+	int	len;
 
 	stacked = 0;
 	len = 0;
@@ -45,39 +45,10 @@ int	ft_stacked_word(char *line, int *i)
 	return (len);
 }
 
-int	ft_quote_word_len(char *line, int *i, char *quote, int *in_quotes)
-{
-	int len;
-
-	len = 0;
-	if (line[*i] && is_quote(line[*i]) && *in_quotes == 0)
-	{
-		*in_quotes = 1;
-		*quote = line[*i];
-		(*i)++;
-		len++;
-	}
-	if (line[*i] && *in_quotes == 1)
-	{
-		if (line[*i] == *quote)
-			*in_quotes = 0;
-		(*i)++;
-		len++;
-	}
-	if (line[*i] && !is_sep(line[*i]) && !is_meta(line[*i])
-		&& !is_quote(line[*i]) && *in_quotes == 0)
-	{
-		(*i)++;
-		len++;
-	}
-	return (len);
-}
-
-//echo "cat lol.c | cat > lol.c"
 int	ft_next_word_len(char *line, int *i)
 {
-	int	in_quotes;
-	int	len;
+	int		in_quotes;
+	int		len;
 	char	quote;
 
 	in_quotes = 0;
@@ -92,10 +63,10 @@ int	ft_next_word_len(char *line, int *i)
 			break ;
 		}
 		else if (line[*i] && is_meta(line[*i]) && in_quotes == 0 && len != 0)
-			break;
+			break ;
 		len += ft_quote_word_len(line, i, &quote, &in_quotes);
 		if (line[*i] && is_sep(line[*i]) && in_quotes == 0)
-			break;
+			break ;
 	}
 	return (len);
 }

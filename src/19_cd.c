@@ -55,6 +55,20 @@ int	ft_get_path(char *path, t_envp **ep, char **t, int *f)
 	return (0);
 }
 
+int	ft_open_dir(DIR **dirp, char *t, char *path)
+{
+	*dirp = opendir(t);
+	if (!(*dirp))
+	{
+		if (access(path, F_OK) == 0)
+			printf("minishell: cd : %s: Not a directory\n", path);
+		else
+			printf("minishell: cd : %s: No such file or directory\n", path);
+		return (1);
+	}
+	return (0);
+}
+
 int	do_cd(char *path, t_envp **ep)
 {
 	DIR		*dirp;
@@ -69,29 +83,18 @@ int	do_cd(char *path, t_envp **ep)
 	t = NULL;
 	if (ft_get_path(path, ep, &t, &f) == -1)
 		return (-1);
-	dirp = opendir(t);
-	if (!dirp)
-	{
-		if (access(path, F_OK) == 0)
-			printf("minishell: cd : %s: Not a directory\n", path);
-		else
-			printf("minishell: cd : %s: No such file or directory\n", path);
-		return (ft_free(t), 1);
-	}
+	if (ft_open_dir(&dirp, t, path) == 1)
+		return (free(t), 1);
 	closedir(dirp);
 	original_pwd = ft_getenv("PWD", *ep);
 	if (chdir(t) != 0)
-	{
-		perror("chdir");
-		ft_free(t);
-		return (1);
-	}
+		return (perror("chdir"), ft_free(t), 1);
 	cwd = getcwd(cwd, 0);
 	do_export("OLDPWD", original_pwd, ep, NULL);
 	do_export("PWD", cwd, ep, NULL);
 	if (f == 1)
 		ft_free(t);
-return (ft_free(cwd), 0);
+	return (ft_free(cwd), 0);
 }
 
 int	exec_cd(t_command *cmd, t_envp **ep)
@@ -105,22 +108,5 @@ int	exec_cd(t_command *cmd, t_envp **ep)
 		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
 		return (1);
 	}
-	return (0);
-}
-
-int	do_pwd(t_envp *ep)
-{
-	char	*cwd;
-
-	cwd = NULL;
-	cwd = getcwd(cwd, 0);
-	if (!cwd)
-	{
-		cwd = ft_strdup(ft_getenv("PWD", ep));
-		if (!cwd)
-			return (-1);
-	}
-	printf("%s\n", cwd);
-	free(cwd);
 	return (0);
 }

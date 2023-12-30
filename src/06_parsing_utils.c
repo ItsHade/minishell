@@ -47,17 +47,6 @@ int	ft_get_args2(t_command *command, t_token *current, int a)
 	return (0);
 }
 
-int	ft_get_amb(t_command *command)
-{
-	int	a;
-
-	a = 0;
-	command->is_ambiguous = ft_calloc(sizeof(int), command->nb_io);
-	if (!command->is_ambiguous)
-		return (perror("ft_calloc in ft_get_amb"), -1);
-	return (0);
-}
-
 int	ft_get_args(t_command *command, t_token **token_list)
 {
 	t_token	*current;

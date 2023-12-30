@@ -14,68 +14,11 @@
 
 extern int	g_return;
 
-t_envp	*ft_lstlast_ev(t_envp *lst)
+int	do_exports(t_command *cmd, t_envp **ep, int i)
 {
-	if (!lst)
-		return (0);
-	while (lst)
-	{
-		if (lst->next == NULL)
-			return (lst);
-		lst = lst->next;
-	}
-	return (lst);
-}
-
-void	ft_lstadd_back_ev(t_envp **lst, t_envp *new) //int type
-{
-	t_envp	*t;
-
-	t = *lst;
-	if (!*lst)
-		*lst = new;
-	else
-	{
-		t = ft_lstlast_ev(*lst);
-		t->next = new;
-	}
-}
-
-char	*ft_getenv(char *env_name, t_envp *ep)
-{
-	while (ep)
-	{
-		if (!(ft_strcmp(ep->content[0], env_name)))
-			return (ep->content[1]);
-		ep = ep->next;
-	}
-	return (NULL);
-}
-
-void	print_export(t_envp *ep)
-{
-	if (!ep)
-		return ;
-	while (ep)
-	{
-		printf("declare -x ");
-		if (ep->content[0])
-			printf("%s", ep->content[0]);
-		if (ep->content[1])
-			printf("=\"%s\"\n", ep->content[1]);
-		else
-			printf("\n");
-		ep = ep->next;
-	}
-}
-
-int	do_exports(t_command *cmd, t_envp **ep)
-{
-	int	i;
 	char	**ags;
-	int	ret;
+	int		ret;
 
-	i = 0;
 	ret = 0;
 	g_return = 0;
 	if (cmd->cmd_arg[1] == NULL)
@@ -101,18 +44,19 @@ int	do_exports(t_command *cmd, t_envp **ep)
 
 int	do_export(char *name, char *value, t_envp **ep, char *cmd)
 {
-	t_envp *t;
+	t_envp	*t;
 
-	t = *ep;	
+	t = *ep;
 	if (!(ft_strcmp(name, "$?")) || ft_isdigit(name[0]) || inv_env_name(name))
-			return (export_error(name, value, cmd));
+		return (export_error(name, value, cmd));
 	if (t)
 	{
 		while (t)
 		{
 			if (!(ft_strcmp(t->content[0], name)))
 			{
-				if ((t->content[1] && !(ft_strcmp(t->content[1], value))) || !value)
+				if ((t->content[1] && !(ft_strcmp(t->content[1], value)))
+					|| !value)
 					return (0);
 				ft_free(t->content[1]);
 				t->content[1] = ft_strdup(value);
@@ -121,7 +65,7 @@ int	do_export(char *name, char *value, t_envp **ep, char *cmd)
 			t = t->next;
 		}
 	}
-	return (build_new_envp(name, value, ep)); //-1(g_return) ou 0(g)
+	return (build_new_envp(name, value, ep));
 }
 
 int	export_error(char *name, char *value, char *cmd)
@@ -141,7 +85,7 @@ int	export_error(char *name, char *value, char *cmd)
 int	build_new_envp(char *name, char *value, t_envp **ep)
 {
 	char	**content;
-		
+
 	content = NULL;
 	content = malloc(sizeof(char *) * 3);
 	if (!(content))
@@ -152,13 +96,13 @@ int	build_new_envp(char *name, char *value, t_envp **ep)
 	content[0] = ft_strdup(name);
 	content[1] = ft_strdup(value);
 	content[2] = NULL;
-	return (add_new_envp(ep, content)); //-1(g_return) ou 0(g)
+	return (add_new_envp(ep, content));
 }
 
 char	**add_content(char *name, char *value)
 {
 	char	**content;
-		
+
 	content = NULL;
 	content = malloc(sizeof(char *) * 3);
 	if (!(content))

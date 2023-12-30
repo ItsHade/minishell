@@ -14,15 +14,6 @@
 
 int	g_return = 0;
 
-void	ft_exit(t_data *data, char *line, int nb)
-{
-	clear_ep(&data->env);
-	rl_clear_history();
-	ft_free(line);
-	line = NULL;
-	exit(nb);
-}
-
 char	*ft_get_line(t_data *data, char *line)
 {
 	line = readline("\033[4;32mMinishell\033[0;32m>\033[0;37m ");
